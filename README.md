@@ -13,3 +13,15 @@ Winternote aim to provide same action and interfaces on all browsers.
 * Google Docs (//drive.google.com)
 * Webkit Editing (//github.com/WebKit/webkit)
 * and Summernote (//github.com/summernote/summernote)
+
+#### For Development
+```bash
+# gulp; you might have this installed already
+npm install -g gulp
+
+# install node packages
+npm install
+
+# start server and open browser(http://localhost:8080/).
+gulp
+```

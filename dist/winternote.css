@@ -1,0 +1,16 @@
+/* Mixins
+ --------------------------------------*/
+.bordered {
+  border: 1px solid black;
+}
+/* Layout
+ --------------------------------------*/
+.note-toolbar {
+  border: 1px solid black;
+}
+.note-document {
+  border: 1px solid black;
+}
+.note-statusbar {
+  border: 1px solid black;
+}

@@ -1,10 +1,17 @@
-/*jshint node: true, browser: true*/
+/*jshint node: true*/
 'use strict';
 
-var React = require('react/addons');
+var React = require('react/addons'),
+    Toolbar = require('./Toolbar.jsx'),
+    Doc = require('./Doc.jsx'),
+    Statusbar = require('./Statusbar.jsx');
 
 module.exports = React.createClass({
   render: function () {
-    return <div className="note-editor">Winternote is WYSIWYG editor for semantic markup.</div>;
+    return <div className="note-editor">
+      <Toolbar/>
+      <Doc/>
+      <Statusbar/>
+    </div>;
   }
 });

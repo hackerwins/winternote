@@ -1,5 +1,5 @@
 # Winternote
-Winternote is a kind of WYSIWYG editor which doesn't use contentEditable property.
+Winternote is WYSIWYG editor for semantic markup.
 
 ### Winternote
 Many web editors use contentEditable or designMode for editing. That functionality is the easiest way to make edit on the way.
@@ -12,4 +12,4 @@ Winternote aim to provide same action and interfaces on all browsers.
 
 * Google Docs (//drive.google.com)
 * Webkit Editing (//github.com/WebKit/webkit)
-* and Summernote (//github.com/HackerWins/summernote)
+* and Summernote (//github.com/summernote/summernote)

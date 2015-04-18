@@ -8,14 +8,24 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/winternote/winternote.git"
+    "url": "https://github.com/summernote/winternote.git"
   },
-  "author": {
-    "name": "hackerwins",
-    "email": "<susukang98@gmail.com>"
-  },
+  "author": "hackerwins <susukang98@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "gulp-server-livereload": "*"
-  }
+    "browser-sync": "^2.6.4",
+    "browserify": "^9.0.8",
+    "gulp": "^3.8.11",
+    "gulp-util": "^3.0.4",
+    "react": "^0.13.1",
+    "react-addons": "^0.9.1-deprecated",
+    "reactify": "^1.1.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.1.1"
+  },
+  "bugs": {
+    "url": "https://github.com/summernote/winternote/issues"
+  },
+  "homepage": "https://github.com/summernote/winternote",
+  "main": "index.html"
 }

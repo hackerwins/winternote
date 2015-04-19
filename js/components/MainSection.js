@@ -2,15 +2,15 @@
 'use strict';
 
 var React = require('react/addons'),
-    Toolbar = require('./Toolbar.jsx'),
-    Doc = require('./Doc.jsx'),
-    Statusbar = require('./Statusbar.jsx');
+    Toolbar = require('./Toolbar'),
+    Editor = require('./Editor'),
+    Statusbar = require('./Statusbar');
 
 module.exports = React.createClass({
   render: function () {
-    return <div className="note-editor">
+    return <div className="note">
       <Toolbar/>
-      <Doc/>
+      <Editor/>
       <Statusbar/>
     </div>;
   }

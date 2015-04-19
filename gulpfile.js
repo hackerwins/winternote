@@ -29,13 +29,13 @@ gulp.task('browserify', function(){
   };
 
   b.transform(reactify);
-  b.add('./src/app.jsx');
+  b.add('./js/app.js');
 
   return rebundle();
 });
 
 gulp.task('compile-less', function () {
-  return gulp.src('src/**/*.less').pipe(less())
+  return gulp.src('less/**/*.less').pipe(less())
                                   // for dist/winternote.css
                                   .pipe(rename(function (path) {
                                     path.dirname = '';
@@ -44,7 +44,7 @@ gulp.task('compile-less', function () {
                                   .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('reload-jsx', ['browserify'], function(){
+gulp.task('reload-js', ['browserify'], function(){
   sync.reload();
 });
 
@@ -53,8 +53,8 @@ gulp.task('reload-less', ['compile-less'], function(){
 });
 
 gulp.task('watch', ['browserify', 'compile-less', 'browser-sync'], function() {
-  gulp.watch('src/**/*.jsx', ['reload-jsx']);
-  gulp.watch('src/**/*.less', ['reload-less']);
+  gulp.watch('js/**/*.js', ['reload-js']);
+  gulp.watch('less/**/*.less', ['reload-less']);
 
   gutil.log(gutil.colors.green('Watching for changes...'));
 });

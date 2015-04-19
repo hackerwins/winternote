@@ -8,9 +8,11 @@
 .note-toolbar {
   border: 1px solid black;
 }
-.note-document {
+.note-editor {
   border: 1px solid black;
-  padding: 5px;
+}
+.note-editor .note-document {
+  border: 1px solid black;
 }
 .note-statusbar {
   border: 1px solid black;

@@ -10,6 +10,7 @@
 }
 .note-document {
   border: 1px solid black;
+  padding: 5px;
 }
 .note-statusbar {
   border: 1px solid black;

@@ -18,6 +18,12 @@ module.exports = {
       text: text
     });
   },
+  updateText: function (text) {
+    NoteDispatcher.dispatch({
+      actionType: NoteConstants.ACTION.UPDATE_TEXT,
+      text: text
+    });
+  },
   backspace: function () {
     NoteDispatcher.dispatch({
       actionType: NoteConstants.ACTION.BACKSPACE
@@ -95,34 +101,65 @@ module.exports = React.createClass({displayName: "exports",
 'use strict';
 
 var React = require('react/addons'),
+    _ = require('lodash'),
     NoteAction = require('../actions/NoteAction');
 
 module.exports = React.createClass({displayName: "exports",
   componentDidMount: function () {
     this.focus();
   },
-  focus: function () {
-    React.findDOMNode(this.refs.input).focus();
-  },
+
   render: function () {
     return React.createElement("input", {ref: "input", className: "note-ime", 
       onKeyDown: this._handleKeyDown, 
-      onKeyPress: this._handleKeyPress}
+      onKeyPress: this._handleKeyPress, 
+      onCompositionStart: this._handleCompositionStart, 
+      onCompositionUpdate: this._handleCompositionUpdate, 
+      onCompositionEnd: this._handleCompositionEnd}
     );
   },
+
+  focus: function () {
+    React.findDOMNode(this.refs.input).focus();
+  },
+
+  _reset: function () {
+    React.findDOMNode(this.refs.input).value = '';
+  },
+
+  _handleCompositionStart: function () {
+    this._reset();
+    // insert dummy text for next composition update.
+    NoteAction.insertText(' ');
+  },
+
+  _handleCompositionUpdate: function (e) {
+    var ch = e.data;
+    NoteAction.updateText(ch);
+  },
+
+  _handleCompositionEnd: function (e) {
+    var ch = e.data;
+    NoteAction.updateText(ch);
+  },
+
+  _handleKeyPress: function (e) {
+    var self = this;
+    var ch = String.fromCharCode(e.charCode);
+    NoteAction.insertText(ch);
+    self._reset();
+  },
+
   _handleKeyDown: function (e) {
     if (e.keyCode === 8) {
-      e.preventDefault();
       NoteAction.backspace();
+      this._reset();
     }
-  },
-  _handleKeyPress: function (e) {
-    NoteAction.insertText(String.fromCharCode(e.charCode));
   }
 });
 
 
-},{"../actions/NoteAction":2,"react/addons":20}],6:[function(require,module,exports){
+},{"../actions/NoteAction":2,"lodash":19,"react/addons":20}],6:[function(require,module,exports){
 /*jshint node: true*/
 'use strict';
 
@@ -150,7 +187,9 @@ var React = require('react/addons');
 
 module.exports = React.createClass({displayName: "exports",
   render: function () {
-    return React.createElement("p", {className: "note-para"}, this.props.text);
+    return React.createElement("p", {className: "note-para"}, 
+      this.props.text.replace(/ /g, '\u00a0')
+    );
   }
 });
 
@@ -187,6 +226,7 @@ var keyMirror = require('keyMirror');
 module.exports = {
   ACTION: keyMirror({
     INSERT_TEXT: null,
+    UPDATE_TEXT: null,
     BACKSPACE: null
   })
 };
@@ -229,15 +269,20 @@ var DocStore = _.extend({
   },
 
   insertText: function (text) {
-    console.log('insert');
     var para = _.last(this.mockDoc.contents);
     para.text += text;
   },
+  
+  updateText: function (text) {
+    var para = _.last(this.mockDoc.contents);
+    para.text = para.text.substring(0, para.text.length - 1) + text;
+  },
+
   backspace: function () {
-    console.log('back');
     var para = _.last(this.mockDoc.contents);
     para.text = para.text.substring(0, para.text.length - 1);
   },
+
   getContents: function () {
     return this.mockDoc.contents;
   }
@@ -247,6 +292,10 @@ NoteDispatcher.register(function(action) {
   switch (action.actionType) {
     case NoteConstants.ACTION.INSERT_TEXT:
       DocStore.insertText(action.text);
+      DocStore.emitChange();
+      break;
+    case NoteConstants.ACTION.UPDATE_TEXT:
+      DocStore.updateText(action.text);
       DocStore.emitChange();
       break;
     case NoteConstants.ACTION.BACKSPACE:

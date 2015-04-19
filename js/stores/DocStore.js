@@ -29,15 +29,20 @@ var DocStore = _.extend({
   },
 
   insertText: function (text) {
-    console.log('insert');
     var para = _.last(this.mockDoc.contents);
     para.text += text;
   },
+  
+  updateText: function (text) {
+    var para = _.last(this.mockDoc.contents);
+    para.text = para.text.substring(0, para.text.length - 1) + text;
+  },
+
   backspace: function () {
-    console.log('back');
     var para = _.last(this.mockDoc.contents);
     para.text = para.text.substring(0, para.text.length - 1);
   },
+
   getContents: function () {
     return this.mockDoc.contents;
   }
@@ -47,6 +52,10 @@ NoteDispatcher.register(function(action) {
   switch (action.actionType) {
     case NoteConstants.ACTION.INSERT_TEXT:
       DocStore.insertText(action.text);
+      DocStore.emitChange();
+      break;
+    case NoteConstants.ACTION.UPDATE_TEXT:
+      DocStore.updateText(action.text);
       DocStore.emitChange();
       break;
     case NoteConstants.ACTION.BACKSPACE:

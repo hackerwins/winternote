@@ -9,10 +9,23 @@ var DocStore = _.extend({
   mockDoc: {
     contents: [{
       type: 'p',
-      text: 'hello world'
+      contents: [{
+        type: 'r',
+        text: 'hello world',
+        style: {
+          backgroundColor: 'yellow'
+        }
+      }]
     }, {
       type: 'p',
-      text: 'winternote is ...'
+      contents: [{
+        type: 'r',
+        text: 'winternote is ...',
+        style: {
+          color: 'white',
+          backgroundColor: 'green'
+        }
+      }]
     }]
   }
 }, EventEmitter.prototype, {
@@ -29,18 +42,18 @@ var DocStore = _.extend({
   },
 
   insertText: function (text) {
-    var para = _.last(this.mockDoc.contents);
-    para.text += text;
+    var run = _.last(_.last(this.mockDoc.contents).contents);
+    run.text += text;
   },
   
   updateText: function (text) {
-    var para = _.last(this.mockDoc.contents);
-    para.text = para.text.substring(0, para.text.length - 1) + text;
+    var run = _.last(_.last(this.mockDoc.contents).contents);
+    run.text = run.text.substring(0, run.text.length - 1) + text;
   },
 
   backspace: function () {
-    var para = _.last(this.mockDoc.contents);
-    para.text = para.text.substring(0, para.text.length - 1);
+    var run = _.last(_.last(this.mockDoc.contents).contents);
+    run.text = run.text.substring(0, run.text.length - 1);
   },
 
   getContents: function () {

@@ -3,6 +3,7 @@
 
 var React = require('react/addons'),
     _ = require('lodash'),
+    agent = require('../utils/agent'),
     NoteAction = require('../actions/NoteAction');
 
 module.exports = React.createClass({
@@ -40,6 +41,15 @@ module.exports = React.createClass({
   },
 
   _handleCompositionEnd: function (e) {
+    // [workaround] for webkit
+    //  - Firefox trigger compositionupdate with a same character of compositionend
+    //  - when composition ended. Opposite of Firefox, webkit skip compositionupdate,
+    //  - this handler only for webkit.
+    
+    if (!agent.isWebkit) {
+      return;
+    }
+
     var ch = e.data;
     NoteAction.updateText(ch);
   },

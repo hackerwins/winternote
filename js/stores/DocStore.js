@@ -1,33 +1,13 @@
 var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     NoteConstants = require('../constants/NoteConstants'),
     EventEmitter = require('events').EventEmitter,
-    _ = require('lodash');
+    _ = require('lodash'),
+    mockDoc = require('../mockDoc');
 
 var CHANGE_EVENT = 'change';
 
 var DocStore = _.extend({
-  mockDoc: {
-    contents: [{
-      type: 'p',
-      contents: [{
-        type: 'r',
-        text: 'hello world',
-        style: {
-          backgroundColor: 'yellow'
-        }
-      }]
-    }, {
-      type: 'p',
-      contents: [{
-        type: 'r',
-        text: 'winternote is ...',
-        style: {
-          color: 'white',
-          backgroundColor: 'green'
-        }
-      }]
-    }]
-  }
+  doc: mockDoc
 }, EventEmitter.prototype, {
   emitChange: function() {
     this.emit(CHANGE_EVENT);
@@ -42,22 +22,22 @@ var DocStore = _.extend({
   },
 
   insertText: function (text) {
-    var run = _.last(_.last(this.mockDoc.contents).contents);
+    var run = _.last(_.last(this.doc.contents).contents);
     run.text += text;
   },
   
   updateText: function (text) {
-    var run = _.last(_.last(this.mockDoc.contents).contents);
+    var run = _.last(_.last(this.doc.contents).contents);
     run.text = run.text.substring(0, run.text.length - 1) + text;
   },
 
   backspace: function () {
-    var run = _.last(_.last(this.mockDoc.contents).contents);
+    var run = _.last(_.last(this.doc.contents).contents);
     run.text = run.text.substring(0, run.text.length - 1);
   },
 
   getContents: function () {
-    return this.mockDoc.contents;
+    return this.doc.contents;
   }
 });
 

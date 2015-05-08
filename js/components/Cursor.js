@@ -5,6 +5,7 @@ var React = require('react/addons');
 
 module.exports = React.createClass({
   render: function () {
-    return <div className="note-statusbar">statusbar</div>;
+    var rect = this.props.selection.getRectStyle();
+    return <div className='note-cursor note-cursor-blink' style={rect}></div>;
   }
 });

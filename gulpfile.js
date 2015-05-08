@@ -59,5 +59,4 @@ gulp.task('watch', ['browserify', 'compile-less', 'browser-sync'], function() {
   gutil.log(gutil.colors.green('Watching for changes...'));
 });
 
-
 gulp.task('default', ['watch']);

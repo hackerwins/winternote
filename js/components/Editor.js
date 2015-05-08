@@ -3,8 +3,9 @@
 
 var React = require('react/addons'),
     _ = require('lodash'),
-    DocStore = require('../stores/DocStore'),
-    Doc = require('./Doc'),
+    NoteStore = require('../stores/NoteStore'),
+    Document = require('./Document'),
+    Cursor = require('./Cursor'),
     InputEditor = require('./InputEditor');
 
 module.exports = React.createClass({
@@ -12,23 +13,27 @@ module.exports = React.createClass({
     return this._getState();
   },
   componentDidMount: function() {
-    DocStore.addChangeListener(this._onChange);
+    NoteStore.addChangeListener(this._onChange);
   },
   componentWillUnmount: function() {
-    DocStore.removeChangeListener(this._onChange);
+    NoteStore.removeChangeListener(this._onChange);
   },
   handleMouseUp: function () {
     this.refs.inputEditor.focus();
   },
   render: function () {
     return <div className='note-editor' onMouseUp={this.handleMouseUp}>
-      <Doc contents={this.state.contents}/>
+      <Document document={this.state.document}/>
+      <Cursor selection={this.state.selection}/>
       <InputEditor ref='inputEditor'/>
     </div>;
   },
   _getState: function () {
+    var doc = NoteStore.getDocument();
+
     return {
-      contents: DocStore.getContents()
+      document: doc,
+      selection: doc.getSelection()
     };
   },
   _onChange: function () {

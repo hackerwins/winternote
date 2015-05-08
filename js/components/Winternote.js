@@ -3,15 +3,13 @@
 
 var React = require('react/addons'),
     Toolbar = require('./Toolbar'),
-    Editor = require('./Editor'),
-    Statusbar = require('./Statusbar');
+    Editor = require('./Editor');
 
 module.exports = React.createClass({
   render: function () {
     return <div className="note">
       <Toolbar/>
       <Editor/>
-      <Statusbar/>
     </div>;
   }
 });

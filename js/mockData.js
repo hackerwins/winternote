@@ -1,8 +1,13 @@
 module.exports = {
-  contents: [{
+  selection: {
+    range: {
+      start: 0,
+      end: 0
+    }
+  },
+  body: [{
     type: 'p',
-    contents: [{
-      type: 'r',
+    runs: [{
       text: 'hello world',
       style: {
         backgroundColor: 'yellow'
@@ -10,8 +15,7 @@ module.exports = {
     }]
   }, {
     type: 'p',
-    contents: [{
-      type: 'r',
+    runs: [{
       text: 'winternote is ...',
       style: {
         color: 'white',

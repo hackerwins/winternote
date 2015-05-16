@@ -10,11 +10,20 @@ _.extend(Document.prototype, {
   getSelection: function () {
     return this._selection;
   },
+
   getData: function () {
     return this._data;
   },
+
   getBody: function () {
     return this._data.body;
+  },
+
+  /**
+   * @return {String}
+   */
+  toBodyTestString: function () {
+    return JSON.stringify(this._data.body, null, '  ');
   }
 });
 

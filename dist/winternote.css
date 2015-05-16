@@ -90,3 +90,6 @@
 .note-statusbar {
   border: 1px solid black;
 }
+.note-statusbar .note-test-body-info {
+  font-size: 12px;
+}

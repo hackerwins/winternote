@@ -33,6 +33,7 @@ var NoteStore = _.extend({
   },
 
   backspace: function () {
+    var selection = this.document.getSelection();
     // TODO implements
   },
 

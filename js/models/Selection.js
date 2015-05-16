@@ -54,6 +54,18 @@ _.extend(Selection.prototype, {
       left: 120,
       height: 17
     }
+  },
+
+  /**
+   * @return {String}
+   */
+  toTestString: function () {
+    var range = this.getRange();
+    return [
+      'start:', range.getStart(),
+      ', ',
+      'end:', range.getEnd()
+    ].join('');
   }
 });
 

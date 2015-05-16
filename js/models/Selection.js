@@ -21,27 +21,26 @@ _.extend(Selection.prototype, {
   },
 
   /**
-   * @return {TextRun}
-   */
-  _getTextRun: function () {
-    // TODO implement by range
-    return _.last(_.last(this.getData().body).runs);
-  },
-
-  /**
    * @param {String} text
    */
   insertText: function (text) {
-    var run = this._getTextRun();
-    run.text += text;
+    var info = this._doc.findTextrun(this._range.getStart());
+    var run = info.textrun;
+    var offset = info.offset;
+
+    run.text = run.text.substr(0, offset) + text + run.text.substr(offset);
+    this._range.shift(text.length);
   },
 
   /**
    * @param {String} text
    */
   updateText: function (text) {
-    var run = this._getTextRun();
-    run.text = run.text.substring(0, run.text.length - 1) + text;
+    var info = this._doc.findTextrun(this._range.getStart());
+    var run = info.textrun;
+    var offset = info.offset;
+
+    run.text = run.text.substr(0, offset - 1) + text + run.text.substr(offset);
   },
 
   /**
@@ -51,7 +50,7 @@ _.extend(Selection.prototype, {
     // TODO for test
     return {
       top: 17,
-      left: 120,
+      left: 78,
       height: 17
     }
   },

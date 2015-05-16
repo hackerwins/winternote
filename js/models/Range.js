@@ -3,12 +3,10 @@ var _ = require('lodash');
 /**
  * @param {Position} start
  * @param {Position} end
- * @param {Selection} selection
  */
-var Range = function (start, end, selection) {
+var Range = function (start, end) {
   this._start = start;
   this._end = end;
-  this._selection = selection;
 };
 
 _.extend(Range.prototype, {
@@ -24,6 +22,11 @@ _.extend(Range.prototype, {
    */
   getEnd: function () {
     return this._end;
+  },
+
+  shift: function (offset) {
+    this._start += offset;
+    this._end += offset;
   }
 });
 

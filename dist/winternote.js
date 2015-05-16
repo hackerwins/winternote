@@ -312,23 +312,38 @@ module.exports = new Dispatcher();
 
 },{"flux":22}],14:[function(require,module,exports){
 module.exports = {
+  type: 'doc',
   selection: {
     range: {
-      start: 0,
-      end: 0
+      start: 12,
+      end: 12
     }
   },
   body: [{
     type: 'p',
     runs: [{
+      type: 'r',
       text: 'hello world',
       style: {
         backgroundColor: 'yellow'
       }
+    }, {
+      type: 'r',
+      text: ' '
+    }, {
+      type: 'r',
+      text: 'summernote',
+      style: {
+        color: 'white',
+        backgroundColor: 'red'
+      }
+    }, {
+      text: '!!!'
     }]
   }, {
     type: 'p',
     runs: [{
+      type: 'r',
       text: 'winternote is ...',
       style: {
         color: 'white',
@@ -357,6 +372,40 @@ _.extend(Document.prototype, {
     return this._data;
   },
 
+  /**
+   * @param {Number} offset
+   * @return {Object}
+   */
+  findTextrun: function (offset) {
+    // DFS for documents
+    return (function _traverse (node) {
+      var info;
+      // container case
+      if (node.type === 'doc') {
+        for (var idx = 0; idx < node.body.length; idx++) {
+          if ((info = _traverse(node.body[idx]))) {
+            return info;
+          }
+        }
+      } else if (node.type === 'p') {
+        for (var idx = 0; idx < node.runs.length; idx++) {
+          if ((info = _traverse(node.runs[idx]))) {
+            return info;
+          }
+        }
+      // has visible point
+      } else if (node.type === 'r') {
+        if (offset <= node.text.length) {
+          return {
+            textrun: node,
+            offset: offset
+          }
+        }
+        offset -= node.text.length;
+      }
+    })(this.getData());
+  },
+
   getBody: function () {
     return this._data.body;
   },
@@ -378,12 +427,10 @@ var _ = require('lodash');
 /**
  * @param {Position} start
  * @param {Position} end
- * @param {Selection} selection
  */
-var Range = function (start, end, selection) {
+var Range = function (start, end) {
   this._start = start;
   this._end = end;
-  this._selection = selection;
 };
 
 _.extend(Range.prototype, {
@@ -399,6 +446,11 @@ _.extend(Range.prototype, {
    */
   getEnd: function () {
     return this._end;
+  },
+
+  shift: function (offset) {
+    this._start += offset;
+    this._end += offset;
   }
 });
 
@@ -429,27 +481,26 @@ _.extend(Selection.prototype, {
   },
 
   /**
-   * @return {TextRun}
-   */
-  _getTextRun: function () {
-    // TODO implement by range
-    return _.last(_.last(this.getData().body).runs);
-  },
-
-  /**
    * @param {String} text
    */
   insertText: function (text) {
-    var run = this._getTextRun();
-    run.text += text;
+    var info = this._doc.findTextrun(this._range.getStart());
+    var run = info.textrun;
+    var offset = info.offset;
+
+    run.text = run.text.substr(0, offset) + text + run.text.substr(offset);
+    this._range.shift(text.length);
   },
 
   /**
    * @param {String} text
    */
   updateText: function (text) {
-    var run = this._getTextRun();
-    run.text = run.text.substring(0, run.text.length - 1) + text;
+    var info = this._doc.findTextrun(this._range.getStart());
+    var run = info.textrun;
+    var offset = info.offset;
+
+    run.text = run.text.substr(0, offset - 1) + text + run.text.substr(offset);
   },
 
   /**
@@ -459,7 +510,7 @@ _.extend(Selection.prototype, {
     // TODO for test
     return {
       top: 17,
-      left: 120,
+      left: 78,
       height: 17
     }
   },

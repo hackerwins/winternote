@@ -12,6 +12,16 @@ var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     NoteConstants = require('../constants/NoteConstants');
 
 module.exports = {
+  moveLeft: function () {
+    NoteDispatcher.dispatch({
+      actionType: NoteConstants.ACTION.MOVE_LEFT
+    });
+  },
+  moveRight: function () {
+    NoteDispatcher.dispatch({
+      actionType: NoteConstants.ACTION.MOVE_RIGHT
+    });
+  },
   insertText: function (text) {
     NoteDispatcher.dispatch({
       actionType: NoteConstants.ACTION.INSERT_TEXT,
@@ -180,9 +190,14 @@ module.exports = React.createClass({displayName: "exports",
   },
 
   _handleKeyDown: function (e) {
+    console.log(e.keyCode);
     if (e.keyCode === 8) {
       NoteAction.backspace();
       this._reset();
+    } else if (e.keyCode === 37) {
+      NoteAction.moveLeft();
+    } else if (e.keyCode === 39) {
+      NoteAction.moveRight();
     }
   }
 });
@@ -298,9 +313,11 @@ var keyMirror = require('keyMirror');
 
 module.exports = {
   ACTION: keyMirror({
+    MOVE_LEFT: null,
+    MOVE_RIGHT: null,
     INSERT_TEXT: null,
     UPDATE_TEXT: null,
-    BACKSPACE: null
+    BACKSPACE: null,
   })
 };
 
@@ -480,6 +497,14 @@ _.extend(Selection.prototype, {
     return this._doc.getData();
   },
 
+  moveLeft: function () {
+    this._range.shift(-1);
+  },
+
+  moveRight: function () {
+    this._range.shift(1);
+  },
+
   /**
    * @param {String} text
    */
@@ -556,6 +581,16 @@ var NoteStore = _.extend({
     this.removeListener(CHANGE_EVENT, callback);
   },
 
+  moveLeft: function () {
+    var selection = this.document.getSelection();
+    selection.moveLeft();
+  },
+
+  moveRight: function () {
+    var selection = this.document.getSelection();
+    selection.moveRight();
+  },
+
   insertText: function (text) {
     var selection = this.document.getSelection();
     selection.insertText(text);
@@ -578,6 +613,14 @@ var NoteStore = _.extend({
 
 NoteDispatcher.register(function (action) {
   switch (action.actionType) {
+    case NoteConstants.ACTION.MOVE_LEFT:
+      NoteStore.moveLeft();
+      NoteStore.emitChange();
+      break;
+    case NoteConstants.ACTION.MOVE_RIGHT:
+      NoteStore.moveRight();
+      NoteStore.emitChange();
+      break;
     case NoteConstants.ACTION.INSERT_TEXT:
       NoteStore.insertText(action.text);
       NoteStore.emitChange();

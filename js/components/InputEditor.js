@@ -62,9 +62,14 @@ module.exports = React.createClass({
   },
 
   _handleKeyDown: function (e) {
+    console.log(e.keyCode);
     if (e.keyCode === 8) {
       NoteAction.backspace();
       this._reset();
+    } else if (e.keyCode === 37) {
+      NoteAction.moveLeft();
+    } else if (e.keyCode === 39) {
+      NoteAction.moveRight();
     }
   }
 });

@@ -22,6 +22,16 @@ var NoteStore = _.extend({
     this.removeListener(CHANGE_EVENT, callback);
   },
 
+  moveLeft: function () {
+    var selection = this.document.getSelection();
+    selection.moveLeft();
+  },
+
+  moveRight: function () {
+    var selection = this.document.getSelection();
+    selection.moveRight();
+  },
+
   insertText: function (text) {
     var selection = this.document.getSelection();
     selection.insertText(text);
@@ -44,6 +54,14 @@ var NoteStore = _.extend({
 
 NoteDispatcher.register(function (action) {
   switch (action.actionType) {
+    case NoteConstants.ACTION.MOVE_LEFT:
+      NoteStore.moveLeft();
+      NoteStore.emitChange();
+      break;
+    case NoteConstants.ACTION.MOVE_RIGHT:
+      NoteStore.moveRight();
+      NoteStore.emitChange();
+      break;
     case NoteConstants.ACTION.INSERT_TEXT:
       NoteStore.insertText(action.text);
       NoteStore.emitChange();

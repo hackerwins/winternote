@@ -20,6 +20,14 @@ _.extend(Selection.prototype, {
     return this._doc.getData();
   },
 
+  moveLeft: function () {
+    this._range.shift(-1);
+  },
+
+  moveRight: function () {
+    this._range.shift(1);
+  },
+
   /**
    * @param {String} text
    */

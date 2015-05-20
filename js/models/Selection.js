@@ -21,11 +21,11 @@ _.extend(Selection.prototype, {
   },
 
   moveLeft: function () {
-    this._range.shift(-1);
+    this._range.shift(-1, this._doc.getChracterCount());
   },
 
   moveRight: function () {
-    this._range.shift(1);
+    this._range.shift(1, this._doc.getChracterCount());
   },
 
   /**
@@ -37,7 +37,7 @@ _.extend(Selection.prototype, {
     var offset = info.offset;
 
     run.text = run.text.substr(0, offset) + text + run.text.substr(offset);
-    this._range.shift(text.length);
+    this._range.shift(text.length, this._doc.getChracterCount());
   },
 
   /**

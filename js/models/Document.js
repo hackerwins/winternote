@@ -16,37 +16,83 @@ _.extend(Document.prototype, {
   },
 
   /**
+   * @param {Node} node
+   * @return {Boolean}
+   */
+  _isContainer: function (node) {
+    return node.type === 'doc' || node.type === 'p';
+  },
+
+  /**
+   * @param {Node} node
+   * @return {Node[]}
+   */
+  _getItems: function (node) {
+    switch (node.type) {
+      case 'doc':
+        return node.body;
+        break;
+      case 'p':
+        return node.runs;
+        break;
+    };
+  },
+
+  /**
+   * traverse document tree with DFS
+   * @param {Function} callback
+   * @return {Object}
+   */
+  _traverse: function (callback) {
+    var self = this;
+
+    return (function _traverse (node) {
+      var info, items;
+      if (self._isContainer(node)) {
+        items = self._getItems(node);
+        for (var idx = 0; idx < items.length; idx++) {
+          if ((info = _traverse(items[idx]))) {
+            return info;
+          }
+        }
+      }
+      return callback(node);
+    })(this.getData());
+  },
+
+  /**
    * @param {Number} offset
    * @return {Object}
    */
   findTextrun: function (offset) {
-    // DFS for documents
-    return (function _traverse (node) {
-      var info;
-      // container case
-      if (node.type === 'doc') {
-        for (var idx = 0; idx < node.body.length; idx++) {
-          if ((info = _traverse(node.body[idx]))) {
-            return info;
-          }
-        }
-      } else if (node.type === 'p') {
-        for (var idx = 0; idx < node.runs.length; idx++) {
-          if ((info = _traverse(node.runs[idx]))) {
-            return info;
-          }
-        }
-      // has visible point
-      } else if (node.type === 'r') {
-        if (offset <= node.text.length) {
-          return {
-            textrun: node,
-            offset: offset
-          }
-        }
-        offset -= node.text.length;
+    return this._traverse(function (node) {
+      if (node.type !== 'r') {
+        return;
       }
-    })(this.getData());
+
+      if (offset <= node.text.length) {
+        return {
+          textrun: node,
+          offset: offset
+        }
+      }
+      offset -= node.text.length;
+    });
+  },
+
+  /**
+   * @return {Number}
+   */
+  getChracterCount: function () {
+    var count = 0;
+
+    this._traverse(function (node) {
+      if (node.type === 'r') {
+        count += node.text.length;
+      }
+    });
+
+    return count;
   },
 
   getBody: function () {
@@ -57,7 +103,7 @@ _.extend(Document.prototype, {
    * @return {String}
    */
   toBodyTestString: function () {
-    return JSON.stringify(this._data.body, null, '  ');
+    return 'Character: ' + this.getChracterCount() + ',' + JSON.stringify(this._data.body, null, '  ');
   }
 });
 

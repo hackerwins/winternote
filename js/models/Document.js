@@ -48,6 +48,9 @@ _.extend(Document.prototype, {
 
     return (function _traverse (node) {
       var info, items;
+      if ((info = callback(node))) {
+        return info;
+      };
       if (self._isContainer(node)) {
         items = self._getItems(node);
         for (var idx = 0; idx < items.length; idx++) {
@@ -56,7 +59,6 @@ _.extend(Document.prototype, {
           }
         }
       }
-      return callback(node);
     })(this.getData());
   },
 
@@ -65,18 +67,24 @@ _.extend(Document.prototype, {
    * @return {Object}
    */
   findTextrun: function (offset) {
+    var isFirstParagraph = true;
+    
     return this._traverse(function (node) {
-      if (node.type !== 'r') {
-        return;
-      }
-
-      if (offset <= node.text.length) {
-        return {
-          textrun: node,
-          offset: offset
+      if (node.type === 'p') {
+        if (isFirstParagraph) {
+          isFirstParagraph = false;
+        } else {
+          offset -= 1;
         }
+      } else if (node.type === 'r') {
+        if (offset <= node.text.length) {
+          return {
+            textrun: node,
+            offset: offset
+          }
+        }
+        offset -= node.text.length;
       }
-      offset -= node.text.length;
     });
   },
 
@@ -84,10 +92,17 @@ _.extend(Document.prototype, {
    * @return {Number}
    */
   getChracterCount: function () {
+    var isFirstParagraph = true;
     var count = 0;
 
     this._traverse(function (node) {
-      if (node.type === 'r') {
+      if (node.type === 'p') {
+        if (isFirstParagraph) {
+          isFirstParagraph = false;
+        } else {
+          count += 1;
+        }
+      } else if (node.type === 'r') {
         count += node.text.length;
       }
     });

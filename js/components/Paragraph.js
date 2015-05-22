@@ -13,6 +13,7 @@ module.exports = React.createClass({
         {run.text.replace(/ /g, '\u00a0')}
         </span>;
       })}
+      <span>&nbsp;</span>
     </p>;
   }
 });

@@ -2,10 +2,24 @@ module.exports = {
   type: 'doc',
   selection: {
     range: {
-      start: 12,
-      end: 12
+      start: 0,
+      end: 0
     }
   },
+  body: [{
+    type: 'p',
+    runs: [{
+      type: 'r',
+      text: 'ab'
+    }]
+  }, {
+    type: 'p',
+    runs: [{
+      type: 'r',
+      text: 'cd'
+    }]
+  }]
+  /*
   body: [{
     type: 'p',
     runs: [{
@@ -39,4 +53,5 @@ module.exports = {
       }
     }]
   }]
+  */
 };

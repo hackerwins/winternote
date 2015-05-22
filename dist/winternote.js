@@ -217,7 +217,8 @@ module.exports = React.createClass({displayName: "exports",
         return React.createElement("span", {className: "note-run", style: run.style}, 
         run.text.replace(/ /g, '\u00a0')
         );
-      })
+      }), 
+      React.createElement("span", null, " ")
     );
   }
 });
@@ -331,10 +332,24 @@ module.exports = {
   type: 'doc',
   selection: {
     range: {
-      start: 12,
-      end: 12
+      start: 0,
+      end: 0
     }
   },
+  body: [{
+    type: 'p',
+    runs: [{
+      type: 'r',
+      text: 'ab'
+    }]
+  }, {
+    type: 'p',
+    runs: [{
+      type: 'r',
+      text: 'cd'
+    }]
+  }]
+  /*
   body: [{
     type: 'p',
     runs: [{
@@ -368,6 +383,7 @@ module.exports = {
       }
     }]
   }]
+  */
 };
 
 
@@ -422,6 +438,9 @@ _.extend(Document.prototype, {
 
     return (function _traverse (node) {
       var info, items;
+      if ((info = callback(node))) {
+        return info;
+      };
       if (self._isContainer(node)) {
         items = self._getItems(node);
         for (var idx = 0; idx < items.length; idx++) {
@@ -430,7 +449,6 @@ _.extend(Document.prototype, {
           }
         }
       }
-      return callback(node);
     })(this.getData());
   },
 
@@ -439,18 +457,24 @@ _.extend(Document.prototype, {
    * @return {Object}
    */
   findTextrun: function (offset) {
+    var isFirstParagraph = true;
+    
     return this._traverse(function (node) {
-      if (node.type !== 'r') {
-        return;
-      }
-
-      if (offset <= node.text.length) {
-        return {
-          textrun: node,
-          offset: offset
+      if (node.type === 'p') {
+        if (isFirstParagraph) {
+          isFirstParagraph = false;
+        } else {
+          offset -= 1;
         }
+      } else if (node.type === 'r') {
+        if (offset <= node.text.length) {
+          return {
+            textrun: node,
+            offset: offset
+          }
+        }
+        offset -= node.text.length;
       }
-      offset -= node.text.length;
     });
   },
 
@@ -458,10 +482,17 @@ _.extend(Document.prototype, {
    * @return {Number}
    */
   getChracterCount: function () {
+    var isFirstParagraph = true;
     var count = 0;
 
     this._traverse(function (node) {
-      if (node.type === 'r') {
+      if (node.type === 'p') {
+        if (isFirstParagraph) {
+          isFirstParagraph = false;
+        } else {
+          count += 1;
+        }
+      } else if (node.type === 'r') {
         count += node.text.length;
       }
     });
@@ -590,6 +621,9 @@ _.extend(Selection.prototype, {
     return this._range;
   },
 
+  /**
+   * @return {Object}
+   */
   getData: function () {
     return this._doc.getData();
   },
@@ -623,6 +657,15 @@ _.extend(Selection.prototype, {
     var offset = info.offset;
 
     run.text = run.text.substr(0, offset - 1) + text + run.text.substr(offset);
+  },
+
+  backspace: function () {
+    var info = this._doc.findTextrun(this._range.getStart());
+    var run = info.textrun;
+    var offset = info.offset;
+
+    run.text = run.text.substr(0, offset - 1) + run.text.substr(offset);
+    this._range.shift(-1, this._doc.getChracterCount());
   },
 
   /**

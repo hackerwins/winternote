@@ -16,6 +16,9 @@ _.extend(Selection.prototype, {
     return this._range;
   },
 
+  /**
+   * @return {Object}
+   */
   getData: function () {
     return this._doc.getData();
   },
@@ -49,6 +52,15 @@ _.extend(Selection.prototype, {
     var offset = info.offset;
 
     run.text = run.text.substr(0, offset - 1) + text + run.text.substr(offset);
+  },
+
+  backspace: function () {
+    var info = this._doc.findTextrun(this._range.getStart());
+    var run = info.textrun;
+    var offset = info.offset;
+
+    run.text = run.text.substr(0, offset - 1) + run.text.substr(offset);
+    this._range.shift(-1, this._doc.getChracterCount());
   },
 
   /**

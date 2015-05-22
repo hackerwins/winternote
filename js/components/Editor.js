@@ -29,7 +29,7 @@ module.exports = React.createClass({
     </div>;
   },
   _getState: function () {
-    var doc = NoteStore.getDocument();
+    var doc = NoteStore.getEditor().getDocument();
 
     return {
       document: doc,

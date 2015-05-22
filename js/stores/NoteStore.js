@@ -2,13 +2,13 @@ var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     NoteConstants = require('../constants/NoteConstants'),
     EventEmitter = require('events').EventEmitter,
     _ = require('lodash'),
-    Document = require('../models/Document'),
+    Editor = require('../models/Editor'),
     mockData = require('../mockData');
 
 var CHANGE_EVENT = 'change';
 
 var NoteStore = _.extend({
-  document: new Document(mockData)
+  editor: new Editor(mockData)
 }, EventEmitter.prototype, {
   emitChange: function () {
     this.emit(CHANGE_EVENT);
@@ -22,56 +22,33 @@ var NoteStore = _.extend({
     this.removeListener(CHANGE_EVENT, callback);
   },
 
-  moveLeft: function () {
-    var selection = this.document.getSelection();
-    selection.moveLeft();
-  },
-
-  moveRight: function () {
-    var selection = this.document.getSelection();
-    selection.moveRight();
-  },
-
-  insertText: function (text) {
-    var selection = this.document.getSelection();
-    selection.insertText(text);
-  },
-  
-  updateText: function (text) {
-    var selection = this.document.getSelection();
-    selection.updateText(text);
-  },
-
-  backspace: function () {
-    var selection = this.document.getSelection();
-    // TODO implements
-  },
-
-  getDocument: function () {
-    return this.document;
+  getEditor: function () {
+    return this.editor;
   }
 });
 
 NoteDispatcher.register(function (action) {
+  var editor = NoteStore.getEditor();
+
   switch (action.actionType) {
     case NoteConstants.ACTION.MOVE_LEFT:
-      NoteStore.moveLeft();
+      editor.moveLeft();
       NoteStore.emitChange();
       break;
     case NoteConstants.ACTION.MOVE_RIGHT:
-      NoteStore.moveRight();
+      editor.moveRight();
       NoteStore.emitChange();
       break;
     case NoteConstants.ACTION.INSERT_TEXT:
-      NoteStore.insertText(action.text);
+      editor.insertText(action.text);
       NoteStore.emitChange();
       break;
     case NoteConstants.ACTION.UPDATE_TEXT:
-      NoteStore.updateText(action.text);
+      editor.updateText(action.text);
       NoteStore.emitChange();
       break;
     case NoteConstants.ACTION.BACKSPACE:
-      NoteStore.backspace();
+      editor.backspace();
       NoteStore.emitChange();
       break;
   }

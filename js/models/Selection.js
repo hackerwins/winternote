@@ -36,8 +36,12 @@ _.extend(Selection.prototype, {
    */
   insertText: function (text) {
     var info = this._doc.findTextrun(this._range.getStart());
-    var run = info.textrun;
+    var stack = info.stack;
     var offset = info.offset;
+
+    doc = stack[0];
+    para = stack[1];
+    run = stack[2];
 
     run.text = run.text.substr(0, offset) + text + run.text.substr(offset);
     this._range.shift(text.length, this._doc.getCharacterCount());
@@ -48,7 +52,12 @@ _.extend(Selection.prototype, {
    */
   updateText: function (text) {
     var info = this._doc.findTextrun(this._range.getStart());
-    var run = info.textrun;
+    var stack = info.stack;
+    var offset = info.offset;
+
+    doc = stack[0];
+    para = stack[1];
+    run = stack[2];
     var offset = info.offset;
 
     run.text = run.text.substr(0, offset - 1) + text + run.text.substr(offset);
@@ -56,11 +65,27 @@ _.extend(Selection.prototype, {
 
   backspace: function () {
     var info = this._doc.findTextrun(this._range.getStart());
-    var run = info.textrun;
+    var stack = info.stack;
     var offset = info.offset;
 
-    run.text = run.text.substr(0, offset - 1) + run.text.substr(offset);
+    doc = stack[0];
+    para = stack[1];
+    run = stack[2];
+
+    if (run.text.length === 0) {
+      para.runs.splice(para.runs.indexOf(run), 1);
+      if (!para.runs.length) {
+        doc.body.splice(doc.body.indexOf(para), 1);
+      }
+    } else {
+      run.text = run.text.substr(0, offset - 1) + run.text.substr(offset);
+    }
+
     this._range.shift(-1, this._doc.getCharacterCount());
+  },
+
+  insertParagraph: function () {
+
   },
 
   /**

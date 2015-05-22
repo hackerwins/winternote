@@ -45,12 +45,17 @@ _.extend(Document.prototype, {
    */
   _traverse: function (callback) {
     var self = this;
+    var stack = [];
 
     return (function _traverse (node) {
       var info, items;
-      if ((info = callback(node))) {
+
+      stack.push(node);
+
+      if ((info = callback(node, stack))) {
         return info;
       };
+
       if (self._isContainer(node)) {
         items = self._getItems(node);
         for (var idx = 0; idx < items.length; idx++) {
@@ -59,6 +64,8 @@ _.extend(Document.prototype, {
           }
         }
       }
+
+      stack.pop();
     })(this.getData());
   },
 
@@ -67,10 +74,12 @@ _.extend(Document.prototype, {
    * @return {Object}
    */
   findTextrun: function (offset) {
+    var para = null;
     var isFirstParagraph = true;
     
-    return this._traverse(function (node) {
+    return this._traverse(function (node, stack) {
       if (node.type === 'p') {
+        para = node;
         if (isFirstParagraph) {
           isFirstParagraph = false;
         } else {
@@ -79,7 +88,7 @@ _.extend(Document.prototype, {
       } else if (node.type === 'r') {
         if (offset <= node.text.length) {
           return {
-            textrun: node,
+            stack: stack,
             offset: offset
           }
         }

@@ -34,6 +34,11 @@ module.exports = {
       text: text
     });
   },
+  insertParagraph: function () {
+    NoteDispatcher.dispatch({
+      actionType: NoteConstants.ACTION.INSERT_PARAGRAPH
+    });
+  },
   backspace: function () {
     NoteDispatcher.dispatch({
       actionType: NoteConstants.ACTION.BACKSPACE
@@ -192,12 +197,17 @@ module.exports = React.createClass({displayName: "exports",
   _handleKeyDown: function (e) {
     if (e.keyCode === 8) {
       NoteAction.backspace();
-      this._reset();
+    } else if (e.keyCode === 13) {
+      NoteAction.insertParagraph();
     } else if (e.keyCode === 37) {
       NoteAction.moveLeft();
     } else if (e.keyCode === 39) {
       NoteAction.moveRight();
+    } else {
+      return;
     }
+
+    this._reset();
   }
 });
 
@@ -317,6 +327,7 @@ module.exports = {
     MOVE_RIGHT: null,
     INSERT_TEXT: null,
     UPDATE_TEXT: null,
+    INSERT_PARAGRAPH: null,
     BACKSPACE: null,
   })
 };
@@ -435,12 +446,17 @@ _.extend(Document.prototype, {
    */
   _traverse: function (callback) {
     var self = this;
+    var stack = [];
 
     return (function _traverse (node) {
       var info, items;
-      if ((info = callback(node))) {
+
+      stack.push(node);
+
+      if ((info = callback(node, stack))) {
         return info;
       };
+
       if (self._isContainer(node)) {
         items = self._getItems(node);
         for (var idx = 0; idx < items.length; idx++) {
@@ -449,6 +465,8 @@ _.extend(Document.prototype, {
           }
         }
       }
+
+      stack.pop();
     })(this.getData());
   },
 
@@ -457,10 +475,12 @@ _.extend(Document.prototype, {
    * @return {Object}
    */
   findTextrun: function (offset) {
+    var para = null;
     var isFirstParagraph = true;
     
-    return this._traverse(function (node) {
+    return this._traverse(function (node, stack) {
       if (node.type === 'p') {
+        para = node;
         if (isFirstParagraph) {
           isFirstParagraph = false;
         } else {
@@ -469,7 +489,7 @@ _.extend(Document.prototype, {
       } else if (node.type === 'r') {
         if (offset <= node.text.length) {
           return {
-            textrun: node,
+            stack: stack,
             offset: offset
           }
         }
@@ -641,8 +661,12 @@ _.extend(Selection.prototype, {
    */
   insertText: function (text) {
     var info = this._doc.findTextrun(this._range.getStart());
-    var run = info.textrun;
+    var stack = info.stack;
     var offset = info.offset;
+
+    doc = stack[0];
+    para = stack[1];
+    run = stack[2];
 
     run.text = run.text.substr(0, offset) + text + run.text.substr(offset);
     this._range.shift(text.length, this._doc.getCharacterCount());
@@ -653,7 +677,12 @@ _.extend(Selection.prototype, {
    */
   updateText: function (text) {
     var info = this._doc.findTextrun(this._range.getStart());
-    var run = info.textrun;
+    var stack = info.stack;
+    var offset = info.offset;
+
+    doc = stack[0];
+    para = stack[1];
+    run = stack[2];
     var offset = info.offset;
 
     run.text = run.text.substr(0, offset - 1) + text + run.text.substr(offset);
@@ -661,11 +690,27 @@ _.extend(Selection.prototype, {
 
   backspace: function () {
     var info = this._doc.findTextrun(this._range.getStart());
-    var run = info.textrun;
+    var stack = info.stack;
     var offset = info.offset;
 
-    run.text = run.text.substr(0, offset - 1) + run.text.substr(offset);
+    doc = stack[0];
+    para = stack[1];
+    run = stack[2];
+
+    if (run.text.length === 0) {
+      para.runs.splice(para.runs.indexOf(run), 1);
+      if (!para.runs.length) {
+        doc.body.splice(doc.body.indexOf(para), 1);
+      }
+    } else {
+      run.text = run.text.substr(0, offset - 1) + run.text.substr(offset);
+    }
+
     this._range.shift(-1, this._doc.getCharacterCount());
+  },
+
+  insertParagraph: function () {
+
   },
 
   /**
@@ -744,6 +789,10 @@ NoteDispatcher.register(function (action) {
       break;
     case NoteConstants.ACTION.UPDATE_TEXT:
       editor.updateText(action.text);
+      NoteStore.emitChange();
+      break;
+    case NoteConstants.ACTION.INSERT_PARAGRAPH:
+      editor.insertParagraph();
       NoteStore.emitChange();
       break;
     case NoteConstants.ACTION.BACKSPACE:

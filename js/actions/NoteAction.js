@@ -24,6 +24,11 @@ module.exports = {
       text: text
     });
   },
+  insertParagraph: function () {
+    NoteDispatcher.dispatch({
+      actionType: NoteConstants.ACTION.INSERT_PARAGRAPH
+    });
+  },
   backspace: function () {
     NoteDispatcher.dispatch({
       actionType: NoteConstants.ACTION.BACKSPACE

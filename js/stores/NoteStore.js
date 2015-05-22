@@ -47,6 +47,10 @@ NoteDispatcher.register(function (action) {
       editor.updateText(action.text);
       NoteStore.emitChange();
       break;
+    case NoteConstants.ACTION.INSERT_PARAGRAPH:
+      editor.insertParagraph();
+      NoteStore.emitChange();
+      break;
     case NoteConstants.ACTION.BACKSPACE:
       editor.backspace();
       NoteStore.emitChange();

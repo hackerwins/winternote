@@ -91,7 +91,7 @@ _.extend(Document.prototype, {
   /**
    * @return {Number}
    */
-  getChracterCount: function () {
+  getCharacterCount: function () {
     var isFirstParagraph = true;
     var count = 0;
 
@@ -118,7 +118,7 @@ _.extend(Document.prototype, {
    * @return {String}
    */
   toBodyTestString: function () {
-    return 'Character: ' + this.getChracterCount() + ',' + JSON.stringify(this._data.body, null, '  ');
+    return 'Character: ' + this.getCharacterCount() + ',' + JSON.stringify(this._data.body, null, '  ');
   }
 });
 

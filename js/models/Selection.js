@@ -17,6 +17,13 @@ _.extend(Selection.prototype, {
   },
 
   /**
+   * @return {Boolean}
+   */
+  isCollapsed: function () {
+    return this._range.isCollapsed();
+  },
+
+  /**
    * @return {Object}
    */
   getData: function () {
@@ -86,18 +93,6 @@ _.extend(Selection.prototype, {
 
   insertParagraph: function () {
 
-  },
-
-  /**
-   * @return {Object}
-   */
-  getRectStyle: function () {
-    // TODO for test
-    return {
-      top: 17,
-      left: 78,
-      height: 17
-    }
   },
 
   /**

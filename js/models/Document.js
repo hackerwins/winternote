@@ -71,7 +71,9 @@ _.extend(Document.prototype, {
 
   /**
    * @param {Number} offset
-   * @return {Object}
+   * @return {Object} position
+   * @return {Node[]} position.stack
+   * @return {Number} position.offset
    */
   findTextrun: function (offset) {
     var para = null;

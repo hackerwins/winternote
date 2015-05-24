@@ -10,20 +10,6 @@ module.exports = {
     type: 'p',
     runs: [{
       type: 'r',
-      text: 'ab'
-    }]
-  }, {
-    type: 'p',
-    runs: [{
-      type: 'r',
-      text: 'cd'
-    }]
-  }]
-  /*
-  body: [{
-    type: 'p',
-    runs: [{
-      type: 'r',
       text: 'hello world',
       style: {
         backgroundColor: 'yellow'
@@ -53,5 +39,4 @@ module.exports = {
       }
     }]
   }]
-  */
 };

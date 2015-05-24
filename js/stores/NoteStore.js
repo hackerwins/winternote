@@ -10,12 +10,12 @@ var CHANGE_EVENT = 'change';
 var NoteStore = _.extend({
   editor: new Editor(mockData)
 }, EventEmitter.prototype, {
-  emitChange: function () {
-    this.emit(CHANGE_EVENT);
+  emitChange: function (type) {
+    this.emit(type || CHANGE_EVENT);
   },
 
-  addChangeListener: function (callback) {
-    this.on(CHANGE_EVENT, callback);
+  addChangeListener: function (callback, type) {
+    this.on(type || CHANGE_EVENT, callback);
   },
 
   removeChangeListener: function (callback) {
@@ -54,6 +54,10 @@ NoteDispatcher.register(function (action) {
     case NoteConstants.ACTION.BACKSPACE:
       editor.backspace();
       NoteStore.emitChange();
+      break;
+    case NoteConstants.ACTION.RENDER_CURSOR:
+      editor.setCursorRect(action.rect);
+      NoteStore.emitChange('render');
       break;
   }
 });

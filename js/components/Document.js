@@ -12,9 +12,8 @@ module.exports = React.createClass({
       {_.map(this.props.document.getBody(), function (content, idx) {
         if (content.type === DocConstants.TYPE.PARAGRAPH) {
           return <Paragraph key={idx} runs={content.runs} />;
-        } else {
-          // TODO others
         }
+        // TODO implmements table, ...
       })}
     </div>;
   }

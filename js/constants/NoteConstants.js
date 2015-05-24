@@ -8,5 +8,6 @@ module.exports = {
     UPDATE_TEXT: null,
     INSERT_PARAGRAPH: null,
     BACKSPACE: null,
+    RENDER_CURSOR: null
   })
 };

@@ -4,6 +4,9 @@ var Document = require('./Document'),
 var Editor = function (data) {
   this._data = data;
   this._document = new Document(data);
+  this._renderData = {
+    cursorRect: null
+  };
 };
 
 _.extend(Editor.prototype, {
@@ -29,8 +32,13 @@ _.extend(Editor.prototype, {
   },
   getDocument: function () {
     return this._document;
+  },
+  setCursorRect: function (rect) {
+    this._renderData.cursorRect = rect;
+  },
+  getRenderData: function () {
+    return this._renderData;
   }
-
 });
 
 module.exports = Editor;

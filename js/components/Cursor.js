@@ -20,7 +20,6 @@ module.exports = React.createClass({
 
   render: function () {
     var style = this.state.rect;
-    console.log('render cursor', style);
 
     return <div className='note-cursor note-cursor-blink' style={style}></div>;
   },

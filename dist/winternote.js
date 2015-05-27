@@ -84,7 +84,6 @@ module.exports = React.createClass({displayName: "exports",
 
   render: function () {
     var style = this.state.rect;
-    console.log('render cursor', style);
 
     return React.createElement("div", {className: "note-cursor note-cursor-blink", style: style});
   },
@@ -132,24 +131,11 @@ module.exports = React.createClass({displayName: "exports",
 
 var React = require('react/addons'),
     _ = require('lodash'),
-    NoteStore = require('../stores/NoteStore'),
     Document = require('./Document'),
     Cursor = require('./Cursor'),
     InputEditor = require('./InputEditor');
 
 module.exports = React.createClass({displayName: "exports",
-  getInitialState: function() {
-    return this._getState();
-  },
-
-  componentDidMount: function() {
-    NoteStore.addChangeListener(this._onChange);
-  },
-
-  componentWillUnmount: function() {
-    NoteStore.removeChangeListener(this._onChange);
-  },
-
   handleMouseUp: function () {
     this.refs.inputEditor.focus();
   },
@@ -157,26 +143,14 @@ module.exports = React.createClass({displayName: "exports",
   render: function () {
     return React.createElement("div", {className: "note-editor", onMouseUp: this.handleMouseUp}, 
       React.createElement(Cursor, null), 
-      React.createElement(Document, {document: this.state.document}), 
+      React.createElement(Document, {document: this.props.document}), 
       React.createElement(InputEditor, {ref: "inputEditor"})
     );
-  },
-
-  _getState: function () {
-    var doc = NoteStore.getEditor().getDocument();
-
-    return {
-      document: doc
-    };
-  },
-
-  _onChange: function () {
-    this.setState(this._getState());
   }
 });
 
 
-},{"../stores/NoteStore":20,"./Cursor":4,"./Document":5,"./InputEditor":7,"lodash":28,"react/addons":29}],7:[function(require,module,exports){
+},{"./Cursor":4,"./Document":5,"./InputEditor":7,"lodash":28,"react/addons":29}],7:[function(require,module,exports){
 /*jshint node: true*/
 'use strict';
 
@@ -289,14 +263,13 @@ module.exports = React.createClass({displayName: "exports",
   },
 
   _triggerRenderCursor: function () {
-    var doc = NoteStore.getEditor().getDocument();
-    var range = doc.getSelection().getRange();
-    var position = doc.findTextrun(range.getStart());
-    var run = _.last(position.stack);
-
-    if (!range.isCollapsed()) {
+    var selection = NoteStore.getEditor().getSelection();
+    if (!selection.isCollapsed()) {
       return;
     }
+
+    var position = selection.getStartPosition();
+    var run = _.last(position.stack);
 
     var idx = _.indexOf(this.props.runs, run);
     if (idx !== -1) {
@@ -336,9 +309,8 @@ var React = require('react/addons');
 
 module.exports = React.createClass({displayName: "exports",
   render: function () {
-    var doc = this.props.document;
-    var selectionInfo = doc.getSelection().toTestString();
-    var bodyInfo = doc.toBodyTestString();
+    var selectionInfo = this.props.selection.toTestString();
+    var bodyInfo = this.props.document.toBodyTestString();
 
     return React.createElement("div", {className: "note-statusbar"}, 
       React.createElement("div", null, "Range: ", selectionInfo), 
@@ -384,16 +356,16 @@ module.exports = React.createClass({displayName: "exports",
   render: function () {
     return React.createElement("div", {className: "note"}, 
       React.createElement(Toolbar, null), 
-      React.createElement(Editor, null), 
-      React.createElement(Statusbar, {document: this.state.document})
+      React.createElement(Editor, {document: this.state.document}), 
+      React.createElement(Statusbar, {document: this.state.document, selection: this.state.selection})
     );
   },
   _getState: function () {
-    var doc = NoteStore.getEditor().getDocument();
+    var editor = NoteStore.getEditor();
 
     return {
-      document: doc,
-      selection: doc.getSelection()
+      document: editor.getDocument(),
+      selection: editor.getSelection()
     };
   },
   _onChange: function () {
@@ -479,19 +451,17 @@ module.exports = {
 
 
 },{}],16:[function(require,module,exports){
-var _ = require('lodash'),
-    Selection = require('../models/Selection');
+var _ = require('lodash');
 
 var Document = function (data) {
   this._data = data;
-  this._selection = new Selection(data, this);
 };
 
 _.extend(Document.prototype, {
-  getSelection: function () {
-    return this._selection;
-  },
-
+  /**
+   * returns raw document data
+   * @return {Object}
+   */
   getData: function () {
     return this._data;
   },
@@ -512,11 +482,9 @@ _.extend(Document.prototype, {
     switch (node.type) {
       case 'doc':
         return node.body;
-        break;
       case 'p':
         return node.runs;
-        break;
-    };
+    }
   },
 
   /**
@@ -535,7 +503,7 @@ _.extend(Document.prototype, {
 
       if ((info = callback(node, stack))) {
         return info;
-      };
+      }
 
       if (self._isContainer(node)) {
         items = self._getItems(node);
@@ -551,18 +519,17 @@ _.extend(Document.prototype, {
   },
 
   /**
+   * find position
    * @param {Number} offset
    * @return {Object} position
    * @return {Node[]} position.stack
    * @return {Number} position.offset
    */
-  findTextrun: function (offset) {
-    var para = null;
+  findPosition: function (offset) {
     var isFirstParagraph = true;
     
     return this._traverse(function (node, stack) {
       if (node.type === 'p') {
-        para = node;
         if (isFirstParagraph) {
           isFirstParagraph = false;
         } else {
@@ -573,7 +540,7 @@ _.extend(Document.prototype, {
           return {
             stack: stack,
             offset: offset
-          }
+          };
         }
         offset -= node.text.length;
       }
@@ -617,13 +584,15 @@ _.extend(Document.prototype, {
 module.exports = Document;
 
 
-},{"../models/Selection":19,"lodash":28}],17:[function(require,module,exports){
+},{"lodash":28}],17:[function(require,module,exports){
 var Document = require('./Document'),
+    Selection = require('./Selection'),
     _ = require('lodash');
 
 var Editor = function (data) {
   this._data = data;
   this._document = new Document(data);
+  this._selection = new Selection(data, this._document);
   this._renderData = {
     cursorRect: null
   };
@@ -631,27 +600,71 @@ var Editor = function (data) {
 
 _.extend(Editor.prototype, {
   moveLeft: function () {
-    var selection = this._document.getSelection();
-    selection.moveLeft();
+    this._selection.moveLeft();
   },
+
   moveRight: function () {
-    var selection = this._document.getSelection();
-    selection.moveRight();
+    this._selection.moveRight();
   },
+
+  /**
+   * insert text
+   * @param {String} text
+   */
   insertText: function (text) {
-    var selection = this._document.getSelection();
-    selection.insertText(text);
+    var position = this._selection.getStartPosition();
+    var offset = position.offset;
+    var run = _.last(position.stack);
+
+    run.text = run.text.substr(0, offset) + text + run.text.substr(offset);
+    this._selection.moveRight(text.length);
   },
+
+  /**
+   * update text
+   * @param {String} text
+   */
   updateText: function (text) {
-    var selection = this._document.getSelection();
-    selection.updateText(text);
+    var position = this._selection.getStartPosition();
+    var offset = position.offset;
+
+    var run = _.last(position.stack);
+
+    run.text = run.text.substr(0, offset - 1) + text + run.text.substr(offset);
   },
+
+  /**
+   * backspace
+   */
   backspace: function () {
-    var selection = this._document.getSelection();
-    selection.backspace();
+    var position = this._selection.getStartPosition();
+
+    var offset = position.offset;
+    var doc = position.stack[0];
+    var para = position.stack[1];
+    var run = position.stack[2];
+
+    if (run.text.length === 0) {
+      para.runs.splice(para.runs.indexOf(run), 1);
+      if (!para.runs.length) {
+        doc.body.splice(doc.body.indexOf(para), 1);
+      }
+    } else {
+      run.text = run.text.substr(0, offset - 1) + run.text.substr(offset);
+    }
+
+    this._selection.moveLeft();
   },
+
+  insertParagraph: function () {
+
+  },
+
   getDocument: function () {
     return this._document;
+  },
+  getSelection: function () {
+    return this._selection;
   },
   setCursorRect: function (rect) {
     this._renderData.cursorRect = rect;
@@ -664,7 +677,7 @@ _.extend(Editor.prototype, {
 module.exports = Editor;
 
 
-},{"./Document":16,"lodash":28}],18:[function(require,module,exports){
+},{"./Document":16,"./Selection":19,"lodash":28}],18:[function(require,module,exports){
 var _ = require('lodash');
 
 /**
@@ -720,7 +733,7 @@ var Selection = function (data, doc) {
   var range = data.selection.range;
 
   this._range = new Range(range.start, range.end, this);
-  this._doc = doc;
+  this._document = doc;
 };
 
 _.extend(Selection.prototype, {
@@ -742,72 +755,29 @@ _.extend(Selection.prototype, {
    * @return {Object}
    */
   getData: function () {
-    return this._doc.getData();
+    return this._document.getData();
   },
 
   moveLeft: function () {
-    this._range.shift(-1, this._doc.getCharacterCount());
-  },
-
-  moveRight: function () {
-    this._range.shift(1, this._doc.getCharacterCount());
+    this._range.shift(-1, this._document.getCharacterCount());
   },
 
   /**
-   * @param {String} text
+   * @param {Number} offset
    */
-  insertText: function (text) {
-    var info = this._doc.findTextrun(this._range.getStart());
-    var stack = info.stack;
-    var offset = info.offset;
-
-    doc = stack[0];
-    para = stack[1];
-    run = stack[2];
-
-    run.text = run.text.substr(0, offset) + text + run.text.substr(offset);
-    this._range.shift(text.length, this._doc.getCharacterCount());
+  moveRight: function (offset) {
+    this._range.shift(offset || 1, this._document.getCharacterCount());
   },
 
   /**
-   * @param {String} text
+   * @return {Position}
    */
-  updateText: function (text) {
-    var info = this._doc.findTextrun(this._range.getStart());
-    var stack = info.stack;
-    var offset = info.offset;
-
-    doc = stack[0];
-    para = stack[1];
-    run = stack[2];
-    var offset = info.offset;
-
-    run.text = run.text.substr(0, offset - 1) + text + run.text.substr(offset);
+  getStartPosition: function () {
+    return this._document.findPosition(this._range.getStart());
   },
 
-  backspace: function () {
-    var info = this._doc.findTextrun(this._range.getStart());
-    var stack = info.stack;
-    var offset = info.offset;
-
-    doc = stack[0];
-    para = stack[1];
-    run = stack[2];
-
-    if (run.text.length === 0) {
-      para.runs.splice(para.runs.indexOf(run), 1);
-      if (!para.runs.length) {
-        doc.body.splice(doc.body.indexOf(para), 1);
-      }
-    } else {
-      run.text = run.text.substr(0, offset - 1) + run.text.substr(offset);
-    }
-
-    this._range.shift(-1, this._doc.getCharacterCount());
-  },
-
-  insertParagraph: function () {
-
+  getEndPosition: function () {
+    return this._document.findPosition(this._range.getEnd());
   },
 
   /**

@@ -28,14 +28,13 @@ module.exports = React.createClass({
   },
 
   _triggerRenderCursor: function () {
-    var doc = NoteStore.getEditor().getDocument();
-    var range = doc.getSelection().getRange();
-    var position = doc.findTextrun(range.getStart());
-    var run = _.last(position.stack);
-
-    if (!range.isCollapsed()) {
+    var selection = NoteStore.getEditor().getSelection();
+    if (!selection.isCollapsed()) {
       return;
     }
+
+    var position = selection.getStartPosition();
+    var run = _.last(position.stack);
 
     var idx = _.indexOf(this.props.runs, run);
     if (idx !== -1) {

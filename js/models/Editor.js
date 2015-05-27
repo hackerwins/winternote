@@ -1,9 +1,11 @@
 var Document = require('./Document'),
+    Selection = require('./Selection'),
     _ = require('lodash');
 
 var Editor = function (data) {
   this._data = data;
   this._document = new Document(data);
+  this._selection = new Selection(data, this._document);
   this._renderData = {
     cursorRect: null
   };
@@ -11,27 +13,71 @@ var Editor = function (data) {
 
 _.extend(Editor.prototype, {
   moveLeft: function () {
-    var selection = this._document.getSelection();
-    selection.moveLeft();
+    this._selection.moveLeft();
   },
+
   moveRight: function () {
-    var selection = this._document.getSelection();
-    selection.moveRight();
+    this._selection.moveRight();
   },
+
+  /**
+   * insert text
+   * @param {String} text
+   */
   insertText: function (text) {
-    var selection = this._document.getSelection();
-    selection.insertText(text);
+    var position = this._selection.getStartPosition();
+    var offset = position.offset;
+    var run = _.last(position.stack);
+
+    run.text = run.text.substr(0, offset) + text + run.text.substr(offset);
+    this._selection.moveRight(text.length);
   },
+
+  /**
+   * update text
+   * @param {String} text
+   */
   updateText: function (text) {
-    var selection = this._document.getSelection();
-    selection.updateText(text);
+    var position = this._selection.getStartPosition();
+    var offset = position.offset;
+
+    var run = _.last(position.stack);
+
+    run.text = run.text.substr(0, offset - 1) + text + run.text.substr(offset);
   },
+
+  /**
+   * backspace
+   */
   backspace: function () {
-    var selection = this._document.getSelection();
-    selection.backspace();
+    var position = this._selection.getStartPosition();
+
+    var offset = position.offset;
+    var doc = position.stack[0];
+    var para = position.stack[1];
+    var run = position.stack[2];
+
+    if (run.text.length === 0) {
+      para.runs.splice(para.runs.indexOf(run), 1);
+      if (!para.runs.length) {
+        doc.body.splice(doc.body.indexOf(para), 1);
+      }
+    } else {
+      run.text = run.text.substr(0, offset - 1) + run.text.substr(offset);
+    }
+
+    this._selection.moveLeft();
   },
+
+  insertParagraph: function () {
+
+  },
+
   getDocument: function () {
     return this._document;
+  },
+  getSelection: function () {
+    return this._selection;
   },
   setCursorRect: function (rect) {
     this._renderData.cursorRect = rect;

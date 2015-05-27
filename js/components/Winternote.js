@@ -20,16 +20,16 @@ module.exports = React.createClass({
   render: function () {
     return <div className="note">
       <Toolbar/>
-      <Editor/>
-      <Statusbar document={this.state.document}/>
+      <Editor document={this.state.document}/>
+      <Statusbar document={this.state.document} selection={this.state.selection} />
     </div>;
   },
   _getState: function () {
-    var doc = NoteStore.getEditor().getDocument();
+    var editor = NoteStore.getEditor();
 
     return {
-      document: doc,
-      selection: doc.getSelection()
+      document: editor.getDocument(),
+      selection: editor.getSelection()
     };
   },
   _onChange: function () {

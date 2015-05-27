@@ -1,16 +1,14 @@
-var _ = require('lodash'),
-    Selection = require('../models/Selection');
+var _ = require('lodash');
 
 var Document = function (data) {
   this._data = data;
-  this._selection = new Selection(data, this);
 };
 
 _.extend(Document.prototype, {
-  getSelection: function () {
-    return this._selection;
-  },
-
+  /**
+   * returns raw document data
+   * @return {Object}
+   */
   getData: function () {
     return this._data;
   },
@@ -31,11 +29,9 @@ _.extend(Document.prototype, {
     switch (node.type) {
       case 'doc':
         return node.body;
-        break;
       case 'p':
         return node.runs;
-        break;
-    };
+    }
   },
 
   /**
@@ -54,7 +50,7 @@ _.extend(Document.prototype, {
 
       if ((info = callback(node, stack))) {
         return info;
-      };
+      }
 
       if (self._isContainer(node)) {
         items = self._getItems(node);
@@ -70,18 +66,17 @@ _.extend(Document.prototype, {
   },
 
   /**
+   * find position
    * @param {Number} offset
    * @return {Object} position
    * @return {Node[]} position.stack
    * @return {Number} position.offset
    */
-  findTextrun: function (offset) {
-    var para = null;
+  findPosition: function (offset) {
     var isFirstParagraph = true;
     
     return this._traverse(function (node, stack) {
       if (node.type === 'p') {
-        para = node;
         if (isFirstParagraph) {
           isFirstParagraph = false;
         } else {
@@ -92,7 +87,7 @@ _.extend(Document.prototype, {
           return {
             stack: stack,
             offset: offset
-          }
+          };
         }
         offset -= node.text.length;
       }

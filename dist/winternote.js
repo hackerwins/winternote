@@ -67,6 +67,7 @@ module.exports = {
 
 var React = require('react/addons'),
     NoteStore = require('../stores/NoteStore'),
+    NoteConstants = require('../constants/NoteConstants'),
     _ = require('lodash');
 
 module.exports = React.createClass({displayName: "exports",
@@ -75,11 +76,11 @@ module.exports = React.createClass({displayName: "exports",
   },
 
   componentDidMount: function() {
-    NoteStore.addChangeListener(this._onChange, 'render');
+    NoteStore.addChangeListener(this._onChange, NoteConstants.EVENT.RENDER);
   },
 
   componentWillUnmount: function() {
-    NoteStore.removeChangeListener(this._onChange, 'render');
+    NoteStore.removeChangeListener(this._onChange, NoteConstants.EVENT.RENDER);
   },
 
   render: function () {
@@ -102,7 +103,7 @@ module.exports = React.createClass({displayName: "exports",
 });
 
 
-},{"../stores/NoteStore":19,"lodash":27,"react/addons":28}],5:[function(require,module,exports){
+},{"../constants/NoteConstants":12,"../stores/NoteStore":19,"lodash":27,"react/addons":28}],5:[function(require,module,exports){
 /*jshint node: true*/
 'use strict';
 
@@ -384,6 +385,10 @@ module.exports = {
     INSERT_PARAGRAPH: null,
     BACKSPACE: null,
     RENDER_CURSOR: null
+  }),
+  EVENT: keyMirror({
+    DOCUMENT: null,
+    RENDER: null
   })
 };
 
@@ -448,14 +453,6 @@ var Document = function (data) {
 _.extend(Document.prototype, {
 
   /**
-   * returns raw document data
-   * @return {Object}
-   */
-  getData: function () {
-    return this._data;
-  },
-
-  /**
    * returns whether node is container or not
    * @param {Node} node
    * @return {Boolean}
@@ -506,7 +503,7 @@ _.extend(Document.prototype, {
       }
 
       stack.pop();
-    })(this.getData());
+    })(this._data);
   },
 
   /**
@@ -816,21 +813,19 @@ var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     Editor = require('../models/Editor'),
     mockData = require('../mockData');
 
-var CHANGE_EVENT = 'change';
-
 var NoteStore = _.extend({
   editor: new Editor(mockData)
 }, EventEmitter.prototype, {
   emitChange: function (type) {
-    this.emit(type || CHANGE_EVENT);
+    this.emit(type || NoteConstants.EVENT.DOCUMENT);
   },
 
   addChangeListener: function (callback, type) {
-    this.on(type || CHANGE_EVENT, callback);
+    this.on(type || NoteConstants.EVENT.DOCUMENT, callback);
   },
 
   removeChangeListener: function (callback) {
-    this.removeListener(CHANGE_EVENT, callback);
+    this.removeListener(NoteConstants.EVENT.DOCUMENT, callback);
   },
 
   getEditor: function () {
@@ -868,7 +863,7 @@ NoteDispatcher.register(function (action) {
       break;
     case NoteConstants.ACTION.RENDER_CURSOR:
       editor.setCursorRect(action.rect);
-      NoteStore.emitChange('render');
+      NoteStore.emitChange(NoteConstants.EVENT.RENDER);
       break;
   }
 });

@@ -5,21 +5,19 @@ var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     Editor = require('../models/Editor'),
     mockData = require('../mockData');
 
-var CHANGE_EVENT = 'change';
-
 var NoteStore = _.extend({
   editor: new Editor(mockData)
 }, EventEmitter.prototype, {
   emitChange: function (type) {
-    this.emit(type || CHANGE_EVENT);
+    this.emit(type || NoteConstants.EVENT.DOCUMENT);
   },
 
   addChangeListener: function (callback, type) {
-    this.on(type || CHANGE_EVENT, callback);
+    this.on(type || NoteConstants.EVENT.DOCUMENT, callback);
   },
 
   removeChangeListener: function (callback) {
-    this.removeListener(CHANGE_EVENT, callback);
+    this.removeListener(NoteConstants.EVENT.DOCUMENT, callback);
   },
 
   getEditor: function () {
@@ -57,7 +55,7 @@ NoteDispatcher.register(function (action) {
       break;
     case NoteConstants.ACTION.RENDER_CURSOR:
       editor.setCursorRect(action.rect);
-      NoteStore.emitChange('render');
+      NoteStore.emitChange(NoteConstants.EVENT.RENDER);
       break;
   }
 });

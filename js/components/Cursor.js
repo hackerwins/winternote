@@ -3,6 +3,7 @@
 
 var React = require('react/addons'),
     NoteStore = require('../stores/NoteStore'),
+    NoteConstants = require('../constants/NoteConstants'),
     _ = require('lodash');
 
 module.exports = React.createClass({
@@ -11,11 +12,11 @@ module.exports = React.createClass({
   },
 
   componentDidMount: function() {
-    NoteStore.addChangeListener(this._onChange, 'render');
+    NoteStore.addChangeListener(this._onChange, NoteConstants.EVENT.RENDER);
   },
 
   componentWillUnmount: function() {
-    NoteStore.removeChangeListener(this._onChange, 'render');
+    NoteStore.removeChangeListener(this._onChange, NoteConstants.EVENT.RENDER);
   },
 
   render: function () {

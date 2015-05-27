@@ -9,5 +9,9 @@ module.exports = {
     INSERT_PARAGRAPH: null,
     BACKSPACE: null,
     RENDER_CURSOR: null
+  }),
+  EVENT: keyMirror({
+    DOCUMENT: null,
+    RENDER: null
   })
 };

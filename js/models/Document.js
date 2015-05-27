@@ -7,14 +7,6 @@ var Document = function (data) {
 _.extend(Document.prototype, {
 
   /**
-   * returns raw document data
-   * @return {Object}
-   */
-  getData: function () {
-    return this._data;
-  },
-
-  /**
    * returns whether node is container or not
    * @param {Node} node
    * @return {Boolean}
@@ -65,7 +57,7 @@ _.extend(Document.prototype, {
       }
 
       stack.pop();
-    })(this.getData());
+    })(this._data);
   },
 
   /**

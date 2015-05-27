@@ -1,14 +1,15 @@
 var _ = require('lodash'),
-    Range = require('../models/Range');
+    Range = require('./Range');
 
 var Selection = function (data, doc) {
   var range = data.selection.range;
 
-  this._range = new Range(range.start, range.end, this);
+  this._range = new Range(range.start, range.end);
   this._document = doc;
 };
 
 _.extend(Selection.prototype, {
+
   /**
    * @return {Range}
    */
@@ -24,17 +25,15 @@ _.extend(Selection.prototype, {
   },
 
   /**
-   * @return {Object}
+   * move left
+   * @param {Number} offset
    */
-  getData: function () {
-    return this._document.getData();
-  },
-
-  moveLeft: function () {
-    this._range.shift(-1, this._document.getCharacterCount());
+  moveLeft: function (offset) {
+    this._range.shift(offset || -1, this._document.getCharacterCount());
   },
 
   /**
+   * move right
    * @param {Number} offset
    */
   moveRight: function (offset) {
@@ -42,20 +41,26 @@ _.extend(Selection.prototype, {
   },
 
   /**
+   * returns start position
    * @return {Position}
    */
   getStartPosition: function () {
     return this._document.findPosition(this._range.getStart());
   },
 
+  /**
+   * returns end position
+   * @return {Position}
+   */
   getEndPosition: function () {
     return this._document.findPosition(this._range.getEnd());
   },
 
   /**
+   * returns test string
    * @return {String}
    */
-  toTestString: function () {
+  inspect: function () {
     var range = this.getRange();
     return [
       'start:', range.getStart(),

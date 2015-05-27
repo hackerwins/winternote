@@ -3,7 +3,6 @@
 
 var React = require('react/addons'),
     _ = require('lodash'),
-    DocConstants = require('../constants/DocConstants'),
     NoteStore = require('../stores/NoteStore'),
     RenderAction = require('../actions/RenderAction');
 

@@ -5,6 +5,7 @@ var Document = function (data) {
 };
 
 _.extend(Document.prototype, {
+
   /**
    * returns raw document data
    * @return {Object}
@@ -14,6 +15,7 @@ _.extend(Document.prototype, {
   },
 
   /**
+   * returns whether node is container or not
    * @param {Node} node
    * @return {Boolean}
    */
@@ -22,7 +24,8 @@ _.extend(Document.prototype, {
   },
 
   /**
-   * @param {Node} node
+   * returns item array of container
+   * @param {Node} node - container
    * @return {Node[]}
    */
   _getItems: function (node) {
@@ -69,7 +72,7 @@ _.extend(Document.prototype, {
    * find position
    * @param {Number} offset
    * @return {Object} position
-   * @return {Node[]} position.stack
+   * @return {Node[]} position.stack - stack of nodes
    * @return {Number} position.offset
    */
   findPosition: function (offset) {
@@ -95,6 +98,7 @@ _.extend(Document.prototype, {
   },
 
   /**
+   * returns total character count
    * @return {Number}
    */
   getCharacterCount: function () {
@@ -121,9 +125,10 @@ _.extend(Document.prototype, {
   },
 
   /**
+   * returns test string
    * @return {String}
    */
-  toBodyTestString: function () {
+  inspect: function () {
     return 'Character: ' + this.getCharacterCount() + ',' + JSON.stringify(this._data.body, null, '  ');
   }
 });

@@ -1,8 +1,8 @@
 var _ = require('lodash');
 
 /**
- * @param {Position} start
- * @param {Position} end
+ * @param {Number} start
+ * @param {Number} end
  */
 var Range = function (start, end) {
   this._start = start;

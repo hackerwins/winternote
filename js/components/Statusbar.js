@@ -5,8 +5,8 @@ var React = require('react/addons');
 
 module.exports = React.createClass({
   render: function () {
-    var selectionInfo = this.props.selection.toTestString();
-    var bodyInfo = this.props.document.toBodyTestString();
+    var selectionInfo = this.props.selection.inspect();
+    var bodyInfo = this.props.document.inspect();
 
     return <div className="note-statusbar">
       <div>Range: {selectionInfo}</div>

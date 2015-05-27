@@ -3,7 +3,6 @@ var Document = require('./Document'),
     _ = require('lodash');
 
 var Editor = function (data) {
-  this._data = data;
   this._document = new Document(data);
   this._selection = new Selection(data, this._document);
   this._renderData = {
@@ -12,6 +11,34 @@ var Editor = function (data) {
 };
 
 _.extend(Editor.prototype, {
+  /**
+   * @return {Document}
+   */
+  getDocument: function () {
+    return this._document;
+  },
+
+  /**
+   * @return {Selection}
+   */
+  getSelection: function () {
+    return this._selection;
+  },
+
+  /**
+   * @return {Object}
+   */
+  getRenderData: function () {
+    return this._renderData;
+  },
+
+  /**
+   * @param {Rect} rect
+   */
+  setCursorRect: function (rect) {
+    this._renderData.cursorRect = rect;
+  },
+
   moveLeft: function () {
     this._selection.moveLeft();
   },
@@ -71,19 +98,6 @@ _.extend(Editor.prototype, {
 
   insertParagraph: function () {
 
-  },
-
-  getDocument: function () {
-    return this._document;
-  },
-  getSelection: function () {
-    return this._selection;
-  },
-  setCursorRect: function (rect) {
-    this._renderData.cursorRect = rect;
-  },
-  getRenderData: function () {
-    return this._renderData;
   }
 });
 

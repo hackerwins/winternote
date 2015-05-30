@@ -1,5 +1,5 @@
 # Winternote
-Winternote is WYSIWYG editor for semantic.
+Winternote is semantic WYSIWYG editor powered by react. 
 
 ### Winternote
 Many web editors use contentEditable or designMode for editing. That functionality is the easiest way to make edit on the way.

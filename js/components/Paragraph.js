@@ -18,15 +18,15 @@ module.exports = React.createClass({
   render: function () {
     return <p className="note-paragraph">
       {_.map(this.props.runs, function (run, idx) {
-        return <span className="note-run" style={run.style}>
-        {run.text.replace(/ /g, '\u00a0')}
-        </span>;
+        return <span key={idx} className="note-run" style={run.style}>{run.text.replace(/ /g, '\u00a0')}</span>;
       })}
       <span>&nbsp;</span>
     </p>;
   },
 
   _triggerRenderCursor: function () {
+    // TODO refactor
+    //  - selection offset to point
     var selection = NoteStore.getEditor().getSelection();
     if (!selection.isCollapsed()) {
       return;
@@ -42,7 +42,7 @@ module.exports = React.createClass({
       var isLeftSide = run.text.length > position.offset;
       var rect;
       if (!run.text.length) {
-        rect = runNode.boundingClientRect();
+        rect = runNode.getBoundingClientRect();
       } else {
         // TODO textRange for IE8, refactoring
         var range = document.createRange();

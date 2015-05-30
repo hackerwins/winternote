@@ -21,8 +21,8 @@ module.exports = React.createClass({
 
   render: function () {
     var style = this.state.rect;
-
-    return <div className='note-cursor note-cursor-blink' style={style}></div>;
+    // TODO addClass note-cursor-blink after 500ms for blink cursor
+    return <div className='note-cursor' style={style}></div>;
   },
 
   _onChange: function () {

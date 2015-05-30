@@ -62,6 +62,7 @@ module.exports = React.createClass({
   },
 
   _handleKeyDown: function (e) {
+    // TODO design key command mapper
     if (e.keyCode === 8) {
       NoteAction.backspace();
     } else if (e.keyCode === 13) {
@@ -74,6 +75,9 @@ module.exports = React.createClass({
       return;
     }
 
+    // key matched
+    //  - prevent default event
+    e.preventDefault();
     this._reset();
   }
 });

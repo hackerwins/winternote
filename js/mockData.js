@@ -10,7 +10,28 @@ module.exports = {
     type: 'p',
     runs: [{
       type: 'r',
-      text: 'hello world',
+      text: 'Typography'
+    }]
+  }, {
+    type: 'p',
+    runs: [{
+      type: 'r',
+      text: 'plain text'
+    }]
+  }, {
+    type: 'p',
+    runs: [{
+      type: 'r',
+      text: 'red',
+      style: {
+        color: 'red'
+      }
+    }, {
+      type: 'r',
+      text: ' '
+    }, {
+      type: 'r',
+      text: 'yellow',
       style: {
         backgroundColor: 'yellow'
       }
@@ -19,20 +40,7 @@ module.exports = {
       text: ' '
     }, {
       type: 'r',
-      text: 'summernote',
-      style: {
-        color: 'white',
-        backgroundColor: 'red'
-      }
-    }, {
-      type: 'r',
-      text: '!!!'
-    }]
-  }, {
-    type: 'p',
-    runs: [{
-      type: 'r',
-      text: 'winternote is ...',
+      text: 'green',
       style: {
         color: 'white',
         backgroundColor: 'green'

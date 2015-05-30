@@ -8,9 +8,9 @@ var React = require('react/addons'),
 module.exports = React.createClass({
   render: function () {
     return <div className='note-document'>
-      {_.map(this.props.document.getBody(), function (content, idx) {
-        if (content.type === 'p') {
-          return <Paragraph key={idx} runs={content.runs} />;
+      {_.map(this.props.document.getBody(), function (node, idx) {
+        if (node.type === 'p') {
+          return <Paragraph key={idx} runs={node.runs} />;
         }
         // TODO implmements table, ...
       })}

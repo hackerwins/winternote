@@ -121,33 +121,9 @@ module.exports = React.createClass({displayName: "exports",
 
 var React = require('react/addons'),
     _ = require('lodash'),
-    Paragraph = require('./Paragraph');
-
-module.exports = React.createClass({displayName: "exports",
-  render: function () {
-    return React.createElement("div", {className: "note-document"}, 
-      _.map(this.props.document.getBody(), function (node, idx) {
-        if (node.type === 'p') {
-          return React.createElement(Paragraph, {key: idx, runs: node.runs});
-        }
-        // TODO implmements table, ...
-      })
-    );
-  }
-});
-
-
-},{"./Paragraph":8,"lodash":30,"react/addons":31}],6:[function(require,module,exports){
-/*jshint node: true*/
-'use strict';
-
-var React = require('react/addons'),
     NoteAction = require('../actions/NoteAction'),
     dom = require('../utils/dom'),
-    _ = require('lodash'),
-    Document = require('./Document'),
-    Cursor = require('./Cursor'),
-    InputEditor = require('./InputEditor');
+    Paragraph = require('./Paragraph');
 
 module.exports = React.createClass({displayName: "exports",
   _offsetFromBoundaryPoint: function (boundaryPoint) {
@@ -187,7 +163,30 @@ module.exports = React.createClass({displayName: "exports",
   },
 
   render: function () {
-    return React.createElement("div", {className: "note-editor", onMouseDown: this.handleMouseDown}, 
+    return React.createElement("div", {className: "note-document", onMouseDown: this.handleMouseDown}, 
+      _.map(this.props.document.getBody(), function (node, idx) {
+        if (node.type === 'p') {
+          return React.createElement(Paragraph, {key: idx, runs: node.runs});
+        }
+        // TODO implmements table, ...
+      })
+    );
+  }
+});
+
+
+},{"../actions/NoteAction":2,"../utils/dom":23,"./Paragraph":8,"lodash":30,"react/addons":31}],6:[function(require,module,exports){
+/*jshint node: true*/
+'use strict';
+
+var React = require('react/addons'),
+    Document = require('./Document'),
+    Cursor = require('./Cursor'),
+    InputEditor = require('./InputEditor');
+
+module.exports = React.createClass({displayName: "exports",
+  render: function () {
+    return React.createElement("div", {className: "note-editor"}, 
       React.createElement(Cursor, null), 
       React.createElement(Document, {document: this.props.document}), 
       React.createElement(InputEditor, {ref: "inputEditor"})
@@ -196,7 +195,7 @@ module.exports = React.createClass({displayName: "exports",
 });
 
 
-},{"../actions/NoteAction":2,"../utils/dom":23,"./Cursor":4,"./Document":5,"./InputEditor":7,"lodash":30,"react/addons":31}],7:[function(require,module,exports){
+},{"./Cursor":4,"./Document":5,"./InputEditor":7,"react/addons":31}],7:[function(require,module,exports){
 /*jshint node: true*/
 'use strict';
 
@@ -1061,8 +1060,7 @@ var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     NoteStore = require('./NoteStore'),
     EventEmitter = require('events').EventEmitter,
     _ = require('lodash'),
-    View = require('../models/View'),
-    mockData = require('../mockData');
+    View = require('../models/View');
 
 var ViewStore = _.extend({
   view: new View()
@@ -1103,7 +1101,7 @@ ViewStore.dispatchToken = NoteDispatcher.register(function (action) {
 module.exports = ViewStore;
 
 
-},{"../constants/NoteConstants":12,"../dispatcher/NoteDispatcher":13,"../mockData":14,"../models/View":19,"./NoteStore":20,"events":24,"lodash":30}],22:[function(require,module,exports){
+},{"../constants/NoteConstants":12,"../dispatcher/NoteDispatcher":13,"../models/View":19,"./NoteStore":20,"events":24,"lodash":30}],22:[function(require,module,exports){
 /*jshint node:true, browser: true*/
 
 var userAgent = navigator.userAgent;

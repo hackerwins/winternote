@@ -3,8 +3,7 @@ var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     NoteStore = require('./NoteStore'),
     EventEmitter = require('events').EventEmitter,
     _ = require('lodash'),
-    View = require('../models/View'),
-    mockData = require('../mockData');
+    View = require('../models/View');
 
 var ViewStore = _.extend({
   view: new View()

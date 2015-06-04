@@ -25,7 +25,7 @@ var NoteStore = _.extend({
   }
 });
 
-var appDispatch = NoteDispatcher.register(function (action) {
+NoteStore.dispatchToken = NoteDispatcher.register(function (action) {
   var editor = NoteStore.getEditor();
 
   switch (action.actionType) {
@@ -60,10 +60,6 @@ var appDispatch = NoteDispatcher.register(function (action) {
     case NoteConstants.ACTION.BACKSPACE:
       editor.backspace();
       NoteStore.emitChange(NoteConstants.EVENT.DOCUMENT);
-      break;
-    case NoteConstants.ACTION.RENDER_CURSOR:
-      editor.setCursorRect(action.rect);
-      NoteStore.emitChange(NoteConstants.EVENT.RENDER);
       break;
   }
 });

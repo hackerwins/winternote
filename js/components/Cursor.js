@@ -2,7 +2,7 @@
 'use strict';
 
 var React = require('react/addons'),
-    NoteStore = require('../stores/NoteStore'),
+    ViewStore = require('../stores/ViewStore'),
     NoteConstants = require('../constants/NoteConstants'),
     _ = require('lodash');
 
@@ -12,15 +12,15 @@ module.exports = React.createClass({
   },
 
   componentDidMount: function() {
-    NoteStore.addChangeListener(this._onChange, NoteConstants.EVENT.RENDER);
+    ViewStore.addChangeListener(this._onChange, NoteConstants.EVENT.RENDER);
   },
 
   componentWillUnmount: function() {
-    NoteStore.removeChangeListener(this._onChange, NoteConstants.EVENT.RENDER);
+    ViewStore.removeChangeListener(this._onChange, NoteConstants.EVENT.RENDER);
   },
 
   render: function () {
-    var style = this.state.rect;
+    var style = this.state.cursor;
     // TODO addClass note-cursor-blink after 500ms for blink cursor
     return <div className='note-cursor' style={style}></div>;
   },
@@ -30,10 +30,10 @@ module.exports = React.createClass({
   },
 
   _getState: function () {
-    var renderData = NoteStore.getEditor().getRenderData();
+    var data = ViewStore.getData();
 
     return {
-      rect: renderData.cursorRect
+      cursor: data.cursor
     };
   }
 });

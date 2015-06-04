@@ -5,9 +5,6 @@ var Document = require('./Document'),
 var Editor = function (data) {
   this._document = new Document(data);
   this._selection = new Selection(data, this._document);
-  this._renderData = {
-    cursorRect: null
-  };
 };
 
 _.extend(Editor.prototype, {
@@ -23,20 +20,6 @@ _.extend(Editor.prototype, {
    */
   getSelection: function () {
     return this._selection;
-  },
-
-  /**
-   * @return {Object}
-   */
-  getRenderData: function () {
-    return this._renderData;
-  },
-
-  /**
-   * @param {Rect} rect
-   */
-  setCursorRect: function (rect) {
-    this._renderData.cursorRect = rect;
   },
 
   /**

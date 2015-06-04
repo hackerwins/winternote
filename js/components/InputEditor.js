@@ -45,7 +45,6 @@ module.exports = React.createClass({
     //  - Firefox trigger compositionupdate with a same character of compositionend
     //  - when composition ended. Opposite of Firefox, webkit skip compositionupdate,
     //  - this handler only for webkit.
-    
     if (!agent.isWebkit) {
       return;
     }

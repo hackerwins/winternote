@@ -2,6 +2,7 @@
 'use strict';
 
 var React = require('react/addons'),
+    NoteConstants = require('../constants/NoteConstants'),
     NoteStore = require('../stores/NoteStore'),
     Toolbar = require('./Toolbar'),
     Statusbar = require('./Statusbar'),
@@ -12,10 +13,10 @@ module.exports = React.createClass({
     return this._getState();
   },
   componentDidMount: function() {
-    NoteStore.addChangeListener(this._onChange);
+    NoteStore.addChangeListener(this._onChange, NoteConstants.EVENT.DOCUMENT);
   },
   componentWillUnmount: function() {
-    NoteStore.removeChangeListener(this._onChange);
+    NoteStore.removeChangeListener(this._onChange, NoteConstants.EVENT.DOCUMENT);
   },
   render: function () {
     return <div className="note">

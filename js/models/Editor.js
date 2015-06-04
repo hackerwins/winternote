@@ -39,6 +39,20 @@ _.extend(Editor.prototype, {
     this._renderData.cursorRect = rect;
   },
 
+  /**
+   * @param {Number} offset
+   */
+  selectStart: function (offset) {
+    this._selection.selectStart(offset);
+  },
+
+  /**
+   * @param {Number} offset
+   */
+  selectEnd: function (offset) {
+    this._selection.selectEnd(offset);
+  },
+
   moveLeft: function () {
     this._selection.moveLeft();
   },
@@ -84,6 +98,7 @@ _.extend(Editor.prototype, {
     var para = position.stack[1];
     var run = position.stack[2];
 
+    // TODO join paragraph
     if (run.text.length === 0) {
       para.runs.splice(para.runs.indexOf(run), 1);
       if (!para.runs.length) {
@@ -96,8 +111,20 @@ _.extend(Editor.prototype, {
     this._selection.moveLeft();
   },
 
+  /**
+   * insert paragraph
+   */
   insertParagraph: function () {
+    var position = this._selection.getStartPosition();
 
+    var offset = position.offset;
+    var doc = position.stack[0];
+    var para = position.stack[1];
+    var run = position.stack[2];
+
+    // TODO split text
+    doc.body.splice(doc.body.indexOf(para) + 1, 0, this._document.createParagraph());
+    this._selection.selectNode(para).collapse(true);
   }
 });
 

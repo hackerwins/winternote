@@ -2,6 +2,18 @@ var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     NoteConstants = require('../constants/NoteConstants');
 
 module.exports = {
+  selectStart: function (offset) {
+    NoteDispatcher.dispatch({
+      actionType: NoteConstants.ACTION.SELECT_START,
+      offset: offset
+    });
+  },
+  selectEnd: function (offset) {
+    NoteDispatcher.dispatch({
+      actionType: NoteConstants.ACTION.SELECT_END,
+      offset: offset
+    });
+  },
   moveLeft: function () {
     NoteDispatcher.dispatch({
       actionType: NoteConstants.ACTION.MOVE_LEFT

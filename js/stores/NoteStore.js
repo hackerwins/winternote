@@ -9,15 +9,15 @@ var NoteStore = _.extend({
   editor: new Editor(mockData)
 }, EventEmitter.prototype, {
   emitChange: function (type) {
-    this.emit(type || NoteConstants.EVENT.DOCUMENT);
+    this.emit(type);
   },
 
   addChangeListener: function (callback, type) {
-    this.on(type || NoteConstants.EVENT.DOCUMENT, callback);
+    this.on(type, callback);
   },
 
-  removeChangeListener: function (callback) {
-    this.removeListener(NoteConstants.EVENT.DOCUMENT, callback);
+  removeChangeListener: function (callback, type) {
+    this.removeListener(type, callback);
   },
 
   getEditor: function () {
@@ -25,33 +25,41 @@ var NoteStore = _.extend({
   }
 });
 
-NoteDispatcher.register(function (action) {
+var appDispatch = NoteDispatcher.register(function (action) {
   var editor = NoteStore.getEditor();
 
   switch (action.actionType) {
+    case NoteConstants.ACTION.SELECT_START:
+      editor.selectStart(action.offset);
+      NoteStore.emitChange(NoteConstants.EVENT.DOCUMENT);
+      break;
+    case NoteConstants.ACTION.SELECT_END:
+      editor.selectEnd(action.offset);
+      NoteStore.emitChange(NoteConstants.EVENT.DOCUMENT);
+      break;
     case NoteConstants.ACTION.MOVE_LEFT:
       editor.moveLeft();
-      NoteStore.emitChange();
+      NoteStore.emitChange(NoteConstants.EVENT.DOCUMENT);
       break;
     case NoteConstants.ACTION.MOVE_RIGHT:
       editor.moveRight();
-      NoteStore.emitChange();
+      NoteStore.emitChange(NoteConstants.EVENT.DOCUMENT);
       break;
     case NoteConstants.ACTION.INSERT_TEXT:
       editor.insertText(action.text);
-      NoteStore.emitChange();
+      NoteStore.emitChange(NoteConstants.EVENT.DOCUMENT);
       break;
     case NoteConstants.ACTION.UPDATE_TEXT:
       editor.updateText(action.text);
-      NoteStore.emitChange();
+      NoteStore.emitChange(NoteConstants.EVENT.DOCUMENT);
       break;
     case NoteConstants.ACTION.INSERT_PARAGRAPH:
       editor.insertParagraph();
-      NoteStore.emitChange();
+      NoteStore.emitChange(NoteConstants.EVENT.DOCUMENT);
       break;
     case NoteConstants.ACTION.BACKSPACE:
       editor.backspace();
-      NoteStore.emitChange();
+      NoteStore.emitChange(NoteConstants.EVENT.DOCUMENT);
       break;
     case NoteConstants.ACTION.RENDER_CURSOR:
       editor.setCursorRect(action.rect);

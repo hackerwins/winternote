@@ -31,6 +31,26 @@ _.extend(Range.prototype, {
     return this._start === this._end;
   },
 
+  /**
+   * collapse range
+   * @param {Boolean} [isCollapseToStart] - default: false
+   */
+  collapse: function (isCollapseToStart) {
+    if (isCollapseToStart) {
+      this._end = this._start;
+    } else {
+      this._start = this._end;
+    }
+  },
+
+  setStart: function (start) {
+    this._start = start;
+  },
+
+  setEnd: function (end) {
+    this._end = end;
+  },
+
   shift: function (offset, chracterCount) {
     if (0 <= this._start + offset && this._start + offset <= chracterCount) {
       this._start += offset;

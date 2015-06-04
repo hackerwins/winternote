@@ -90,6 +90,25 @@ _.extend(Document.prototype, {
   },
 
   /**
+   * returns offset of node
+   * @param {Node} node
+   * @return {Number}
+   */
+  findNodeOffset: function (node) {
+    return 0;
+  },
+
+  getNodeSize: function (node) {
+    if (node.type === 'r') {
+      return node.text.length;
+    } else if (node.type === 'p') {
+      return _.sum(node.runs, this.getNodeSize, this) + 1;
+    } else if (node.type === 'doc') {
+      return _.sum(node.body, this.getNodeSize, this);
+    }
+  },
+
+  /**
    * returns total character count
    * @return {Number}
    */
@@ -116,12 +135,27 @@ _.extend(Document.prototype, {
     return this._data.body;
   },
 
+  createParagraph: function () {
+    return {
+      type: 'p',
+      runs: [{
+        type: 'r',
+        text: ''
+      }]
+    };
+  },
+
   /**
    * returns test string
    * @return {String}
    */
   inspect: function () {
-    return 'Character: ' + this.getCharacterCount() + ',' + JSON.stringify(this._data.body, null, '  ');
+    return [
+      'Character: ',
+      this.getCharacterCount(),
+      ',',
+      JSON.stringify(this._data.body, null, '  ')
+    ].join('');
   }
 });
 

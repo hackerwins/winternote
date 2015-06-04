@@ -57,6 +57,41 @@ _.extend(Selection.prototype, {
   },
 
   /**
+   * @param {Number} offset
+   */
+  selectStart: function (offset) {
+    this._range.setStart(offset);
+  },
+
+  /**
+   * @param {Number} offset
+   */
+  selectEnd: function (offset) {
+    this._range.setEnd(offset);
+  },
+
+  /**
+   * select node
+   * @param {Node} node
+   */
+  selectNode: function (node) {
+    var start = this._document.findNodeOffset(node);
+    var size = this._document.getNodeSize(node);
+
+    this._range.setStart(start);
+    this._range.setEnd(start + size);
+
+    return this;
+  },
+
+  /**
+   * @param {Boolean} [isCollapseToStart]
+   */
+  collapse: function (isCollapseToStart) {
+    this._range.collapse(isCollapseToStart);
+  },
+
+  /**
    * returns test string
    * @return {String}
    */

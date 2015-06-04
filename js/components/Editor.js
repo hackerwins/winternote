@@ -21,11 +21,9 @@ module.exports = React.createClass({
     var self = this;
     var inputEditor = this.refs.inputEditor;
 
-    // FIXME If uncomment this
-    //  - Uncaught Error: Invariant Violation: Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.
-    // NoteAction.selectStart(
-    //   self._offsetFromBoundaryPoint(dom.boundaryPointFromEvent(e))
-    // );
+    NoteAction.selectStart(
+      self._offsetFromBoundaryPoint(dom.boundaryPointFromEvent(e))
+    );
 
     var moveHandler = function (e) {
       NoteAction.selectEnd(

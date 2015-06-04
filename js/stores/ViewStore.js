@@ -1,5 +1,6 @@
 var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     NoteConstants = require('../constants/NoteConstants'),
+    NoteStore = require('./NoteStore'),
     EventEmitter = require('events').EventEmitter,
     _ = require('lodash'),
     View = require('../models/View'),
@@ -34,6 +35,7 @@ ViewStore.dispatchToken = NoteDispatcher.register(function (action) {
 
   switch (action.actionType) {
     case NoteConstants.ACTION.RENDER_CURSOR:
+      NoteDispatcher.waitFor([NoteStore.dispatchToken]);
       view.setCursorRect(action.rect);
       ViewStore.emitChange(NoteConstants.EVENT.RENDER);
       break;

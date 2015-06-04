@@ -161,11 +161,9 @@ module.exports = React.createClass({displayName: "exports",
     var self = this;
     var inputEditor = this.refs.inputEditor;
 
-    // FIXME If uncomment this
-    //  - Uncaught Error: Invariant Violation: Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.
-    // NoteAction.selectStart(
-    //   self._offsetFromBoundaryPoint(dom.boundaryPointFromEvent(e))
-    // );
+    NoteAction.selectStart(
+      self._offsetFromBoundaryPoint(dom.boundaryPointFromEvent(e))
+    );
 
     var moveHandler = function (e) {
       NoteAction.selectEnd(
@@ -315,7 +313,7 @@ module.exports = React.createClass({displayName: "exports",
     //  - selection offset to point
     var selection = NoteStore.getEditor().getSelection();
     if (!selection.isCollapsed()) {
-      // RenderAction.renderCursor();
+      RenderAction.renderCursor();
       return;
     }
 
@@ -1060,6 +1058,7 @@ module.exports = NoteStore;
 },{"../constants/NoteConstants":12,"../dispatcher/NoteDispatcher":13,"../mockData":14,"../models/Editor":16,"events":24,"lodash":30}],21:[function(require,module,exports){
 var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     NoteConstants = require('../constants/NoteConstants'),
+    NoteStore = require('./NoteStore'),
     EventEmitter = require('events').EventEmitter,
     _ = require('lodash'),
     View = require('../models/View'),
@@ -1094,6 +1093,7 @@ ViewStore.dispatchToken = NoteDispatcher.register(function (action) {
 
   switch (action.actionType) {
     case NoteConstants.ACTION.RENDER_CURSOR:
+      NoteDispatcher.waitFor([NoteStore.dispatchToken]);
       view.setCursorRect(action.rect);
       ViewStore.emitChange(NoteConstants.EVENT.RENDER);
       break;
@@ -1103,7 +1103,7 @@ ViewStore.dispatchToken = NoteDispatcher.register(function (action) {
 module.exports = ViewStore;
 
 
-},{"../constants/NoteConstants":12,"../dispatcher/NoteDispatcher":13,"../mockData":14,"../models/View":19,"events":24,"lodash":30}],22:[function(require,module,exports){
+},{"../constants/NoteConstants":12,"../dispatcher/NoteDispatcher":13,"../mockData":14,"../models/View":19,"./NoteStore":20,"events":24,"lodash":30}],22:[function(require,module,exports){
 /*jshint node:true, browser: true*/
 
 var userAgent = navigator.userAgent;

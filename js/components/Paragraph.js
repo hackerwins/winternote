@@ -29,7 +29,7 @@ module.exports = React.createClass({
     //  - selection offset to point
     var selection = NoteStore.getEditor().getSelection();
     if (!selection.isCollapsed()) {
-      // RenderAction.renderCursor();
+      RenderAction.renderCursor();
       return;
     }
 

@@ -4,7 +4,7 @@
  * @param {Event} event
  * @return {Point}
  */
-var getPointFromEvent = function (event) {
+var pointFromEvent = function (event) {
   return {
     x: event.clientX,
     y: event.clientY
@@ -24,7 +24,7 @@ var caretRangeFromPoint = function (point) {
  * @return {BoundaryPoint}
  */
 var boundaryPointFromEvent = function (event) {
-  var range = caretRangeFromPoint(getPointFromEvent(event));
+  var range = caretRangeFromPoint(pointFromEvent(event));
   return {
     container: range.startContainer,
     offset: range.startOffset
@@ -64,7 +64,7 @@ var rectFromBoundaryPoint = function (boundaryPoint) {
 };
 
 module.exports = {
-  getPointFromEvent: getPointFromEvent,
+  pointFromEvent: pointFromEvent,
   boundaryPointFromEvent: boundaryPointFromEvent,
   rectFromBoundaryPoint: rectFromBoundaryPoint
 };

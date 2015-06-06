@@ -4,10 +4,13 @@
 var React = require('react/addons'),
     _ = require('lodash'),
     dom = require('../utils/dom'),
+    context = require('../utils/context'),
+    Textrun = require('./Textrun'),
     NoteStore = require('../stores/NoteStore'),
     RenderAction = require('../actions/RenderAction');
 
 module.exports = React.createClass({
+  mixins: [context.mixin],
   componentDidMount: function () {
     this._handleCursor();
   },
@@ -19,7 +22,7 @@ module.exports = React.createClass({
   render: function () {
     return <p className="note-paragraph">
              {_.map(this.props.runs, function (run, idx) {
-               return <span key={idx} className="note-run" style={run.style}>{run.text.replace(/ /g, '\u00a0')}</span>;
+               return <Textrun key={idx} run={run} />;
              })}
              <span>&nbsp;</span>
            </p>;

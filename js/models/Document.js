@@ -36,15 +36,28 @@ _.extend(Document.prototype, {
    */
   _traverse: function (callback) {
     var self = this;
+    var isFirstParagraph = true;
+
     var stack = [];
+    var offset = 0;
 
     return (function _traverse (node) {
       var info, items;
 
       stack.push(node);
 
-      if ((info = callback(node, stack))) {
+      if ((info = callback(node, stack, offset))) {
         return info;
+      }
+
+      if (node.type === 'p') {
+        if (isFirstParagraph) {
+          isFirstParagraph = false;
+        } else {
+          offset += 1;
+        }
+      } else if (node.type === 'r') {
+        offset += node.text.length;
       }
 
       if (self._isContainer(node)) {
@@ -68,34 +81,30 @@ _.extend(Document.prototype, {
    * @return {Number} position.offset
    */
   findPosition: function (offset) {
-    var isFirstParagraph = true;
-    
-    return this._traverse(function (node, stack) {
-      if (node.type === 'p') {
-        if (isFirstParagraph) {
-          isFirstParagraph = false;
-        } else {
-          offset -= 1;
-        }
-      } else if (node.type === 'r') {
-        if (offset <= node.text.length) {
+    return this._traverse(function (node, stack, startOffset) {
+      if (node.type === 'r') {
+        if (startOffset <= offset && offset <= startOffset + node.text.length) {
           return {
             stack: stack,
-            offset: offset
+            offset: offset - startOffset
           };
         }
-        offset -= node.text.length;
       }
     });
   },
 
   /**
    * returns offset of node
-   * @param {Node} node
+   * @param {Position} position
    * @return {Number}
    */
-  findNodeOffset: function (node) {
-    return 0;
+  findOffset: function (position) {
+    var current = _.last(position.stack);
+    return this._traverse(function (node, stack, offset) {
+      if (current === node) {
+        return offset + position.offset;
+      }
+    });
   },
 
   getNodeSize: function (node) {
@@ -113,18 +122,11 @@ _.extend(Document.prototype, {
    * @return {Number}
    */
   getCharacterCount: function () {
-    var isFirstParagraph = true;
     var count = 0;
 
-    this._traverse(function (node) {
-      if (node.type === 'p') {
-        if (isFirstParagraph) {
-          isFirstParagraph = false;
-        } else {
-          count += 1;
-        }
-      } else if (node.type === 'r') {
-        count += node.text.length;
+    this._traverse(function (node, stack, offset) {
+      if (node.type === 'r') {
+        count = offset + node.text.length;
       }
     });
 

@@ -3,7 +3,9 @@
 
 var React = require('react/addons'),
     dom = require('../utils/dom'),
+    context = require('../utils/context'),
     NoteAction = require('../actions/NoteAction'),
+    NoteStore = require('../stores/NoteStore'),
     Document = require('./Document'),
     Cursor = require('./Cursor'),
     InputEditor = require('./InputEditor');
@@ -18,10 +20,12 @@ module.exports = React.createClass({
   },
 
   _offsetFromBoundaryPoint: function (boundaryPoint) {
-    // TODO find document offset
-    //  - node -> react component -> state object -> document offset
-    console.log(boundaryPoint.container, boundaryPoint.offset);
-    return 1;
+    // find offset from boundary point
+    var component = context.componentByDOMNode(boundaryPoint.container);
+    return NoteStore.getEditor().getDocument().findOffset({
+      stack: [component.props.run],
+      offset: boundaryPoint.offset
+    });
   },
 
   _handleMouseDown: function (e) {

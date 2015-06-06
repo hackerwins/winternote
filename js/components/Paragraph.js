@@ -9,11 +9,11 @@ var React = require('react/addons'),
 
 module.exports = React.createClass({
   componentDidMount: function () {
-    this._handleCursorAndSelection();
+    this._handleCursor();
   },
 
   componentDidUpdate: function () {
-    this._handleCursorAndSelection();
+    this._handleCursor();
   },
 
   render: function () {
@@ -25,7 +25,7 @@ module.exports = React.createClass({
            </p>;
   },
 
-  _handleCursorAndSelection: function () {
+  _handleCursor: function () {
     var self = this;
     var selection = NoteStore.getEditor().getSelection();
     var position = selection.getStartPosition();

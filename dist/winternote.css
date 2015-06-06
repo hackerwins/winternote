@@ -3,15 +3,22 @@
 .test-border {
   border: 1px solid black;
 }
-/* note-editor
+/* note-editing-area
  --------------------------------------*/
-.note-editor {
+.note-editing-area {
+  position: relative;
+  height: 300px;
   border: 1px solid black;
+}
+/* note-ime
+ --------------------------------------*/
+.note-ime {
+  position: absolute;
+  bottom: 0;
 }
 /* note-document
  --------------------------------------*/
 .note-document {
-  border: 1px solid black;
   padding: 10px;
 }
 /* document layer z-index
@@ -37,7 +44,7 @@
   background-color: #76a7fa;
   opacity: 0.5;
   left: 0;
-  width: 50px;
+  width: 100%;
   height: 22px;
 }
 /* note-paragraph-content

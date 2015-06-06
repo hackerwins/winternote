@@ -26,14 +26,14 @@ _.extend(Editor.prototype, {
    * @param {Number} offset
    */
   selectStart: function (offset) {
-    this._selection.selectStart(offset);
+    this._selection.selectStart(offset === -1 ? 0 : offset);
   },
 
   /**
    * @param {Number} offset
    */
   selectEnd: function (offset) {
-    this._selection.selectEnd(offset);
+    this._selection.selectEnd(offset === -1 ? 0 : offset);
   },
 
   moveLeft: function () {

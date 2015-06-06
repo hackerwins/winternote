@@ -12,20 +12,23 @@ var React = require('react/addons'),
 
 module.exports = React.createClass({
   render: function () {
-    return <div className='note-editor' onMouseDown={this._handleMouseDown}>
-      <Cursor/>
-      <Document document={this.props.document}/>
-      <InputEditor ref='inputEditor'/>
+    return <div className='note-editing-area' onMouseDown={this._handleMouseDown}>
+      <Cursor />
+      <Document document={this.props.document} />
+      <InputEditor ref='inputEditor' />
     </div>;
   },
 
+  /**
+   * returns offset From boundaryPoint
+   */
   _offsetFromBoundaryPoint: function (boundaryPoint) {
     // find offset from boundary point
     var component = context.componentByDOMNode(boundaryPoint.container);
-    return NoteStore.getEditor().getDocument().findOffset({
+    return component ? NoteStore.getEditor().getDocument().findOffset({
       stack: [component.props.run],
       offset: boundaryPoint.offset
-    });
+    }) : -1;
   },
 
   _handleMouseDown: function (e) {

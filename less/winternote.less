@@ -20,17 +20,26 @@
   border: 1px solid black;
 }
 
-/* note-editor
+/* note-editing-area
  --------------------------------------*/
-.note-editor {
+.note-editing-area {
+  position: relative;
+  height: 300px;
+  // for test
   .test-border;
-
 }
+
+/* note-ime
+ --------------------------------------*/
+.note-ime {
+  position: absolute;
+  bottom: 0;
+}
+
 
 /* note-document
  --------------------------------------*/
 .note-document {
-  .test-border;
   padding: 10px;
 }
 
@@ -64,7 +73,7 @@
   opacity: 0.5;
   // for test
   left: 0;
-  width: 50px;
+  width: 100%;
   height: 22px;
 }
 

@@ -38,16 +38,18 @@ module.exports = React.createClass({
 
     // [workaround] to avoid dispatch in the middle of a dispatch
     _.defer(function () {
+      var point = null;
+
       var idx = _.indexOf(self.props.paragraph.runs, _.last(position.stack));
       if (idx !== -1) {
         if (selection.isCollapsed()) {
-          RenderAction.renderCursor(dom.rectFromBoundaryPoint({
+          point = dom.rectFromBoundaryPoint({
             container: contentNode.childNodes[idx],
             offset: position.offset
-          }));
-        } else {
-          RenderAction.renderCursor();
+          });
         }
+
+        RenderAction.renderCursor(point);
       }
     });
   }

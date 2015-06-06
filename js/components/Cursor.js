@@ -20,9 +20,23 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var style = _.defaults({
-      display: this.state.cursor ? 'block' : 'none'
-    }, this.state.cursor);
+    var point = this.state.cursor;
+    // TODO refactor editingArea rect
+    var editingArea = document.getElementsByClassName('note-editing-area')[0];
+    var rect = editingArea && editingArea.getBoundingClientRect();
+
+    var style;
+    if (this.state.cursor) {
+      style = {
+        display: 'block',
+        left: this.state.cursor.left - rect.left,
+        top: this.state.cursor.top - rect.top
+      };
+    } else {
+      style = {
+        display: 'none'
+      };
+    }
 
     // TODO addClass note-cursor-blink after 500ms for blink cursor
     return <div className='note-cursor' style={style}></div>;

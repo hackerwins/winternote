@@ -96,9 +96,23 @@ module.exports = React.createClass({displayName: "exports",
   },
 
   render: function () {
-    var style = _.defaults({
-      display: this.state.cursor ? 'block' : 'none'
-    }, this.state.cursor);
+    var point = this.state.cursor;
+    // TODO refactor editingArea rect
+    var editingArea = document.getElementsByClassName('note-editing-area')[0];
+    var rect = editingArea && editingArea.getBoundingClientRect();
+
+    var style;
+    if (this.state.cursor) {
+      style = {
+        display: 'block',
+        left: this.state.cursor.left - rect.left,
+        top: this.state.cursor.top - rect.top
+      };
+    } else {
+      style = {
+        display: 'none'
+      };
+    }
 
     // TODO addClass note-cursor-blink after 500ms for blink cursor
     return React.createElement("div", {className: "note-cursor", style: style});
@@ -157,7 +171,7 @@ var React = require('react/addons'),
 
 module.exports = React.createClass({displayName: "exports",
   render: function () {
-    return React.createElement("div", {className: "note-editor", onMouseDown: this._handleMouseDown}, 
+    return React.createElement("div", {className: "note-editing-area", onMouseDown: this._handleMouseDown}, 
       React.createElement(Cursor, null), 
       React.createElement(Document, {document: this.props.document}), 
       React.createElement(InputEditor, {ref: "inputEditor"})
@@ -336,16 +350,18 @@ module.exports = React.createClass({displayName: "exports",
 
     // [workaround] to avoid dispatch in the middle of a dispatch
     _.defer(function () {
+      var point = null;
+
       var idx = _.indexOf(self.props.paragraph.runs, _.last(position.stack));
       if (idx !== -1) {
         if (selection.isCollapsed()) {
-          RenderAction.renderCursor(dom.rectFromBoundaryPoint({
+          point = dom.rectFromBoundaryPoint({
             container: contentNode.childNodes[idx],
             offset: position.offset
-          }));
-        } else {
-          RenderAction.renderCursor();
+          });
         }
+
+        RenderAction.renderCursor(point);
       }
     });
   }
@@ -480,7 +496,7 @@ module.exports = {
     type: 'p',
     runs: [{
       type: 'r',
-      text: 'Typography'
+      text: 'Winding its way among countless islands, and imbedded in mountains, the "holy lake" extended a dozen leagues still further to the south. With the high plain that there interposed itself to the further passage of the water, commenced a portage of as many miles, which conducted the adventurer to the banks of the Hudson, at a point where, with the usual obstructions of the rapids, or rifts, as they were then termed in the language of the country, the river became navigable to the tide.'
     }]
   }, {
     type: 'p',

@@ -20,12 +20,15 @@ module.exports = React.createClass({
   },
 
   render: function () {
+    // TODO build lineviews per paragraph
     return <div className="note-paragraph">
-             <div className="note-selection-overlay note-overlay-under-text"></div>
-             <div ref="content" className="note-paragraph-content">
-               {_.map(this.props.paragraph.runs, function (run, idx) {
-                 return <Textrun key={idx} run={run} />;
-               })}
+             <div className="note-lineview">
+               <div className="note-selection-overlay note-overlay-under-text"></div>
+               <div ref="content" className="note-lineview-content">
+                 {_.map(this.props.paragraph.runs, function (run, idx) {
+                   return <Textrun key={idx} run={run} />;
+                 })}
+               </div>
              </div>
            </div>;
   },

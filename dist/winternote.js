@@ -332,12 +332,15 @@ module.exports = React.createClass({displayName: "exports",
   },
 
   render: function () {
+    // TODO build lineviews per paragraph
     return React.createElement("div", {className: "note-paragraph"}, 
-             React.createElement("div", {className: "note-selection-overlay note-overlay-under-text"}), 
-             React.createElement("div", {ref: "content", className: "note-paragraph-content"}, 
-               _.map(this.props.paragraph.runs, function (run, idx) {
-                 return React.createElement(Textrun, {key: idx, run: run});
-               })
+             React.createElement("div", {className: "note-lineview"}, 
+               React.createElement("div", {className: "note-selection-overlay note-overlay-under-text"}), 
+               React.createElement("div", {ref: "content", className: "note-lineview-content"}, 
+                 _.map(this.props.paragraph.runs, function (run, idx) {
+                   return React.createElement(Textrun, {key: idx, run: run});
+                 })
+               )
              )
            );
   },

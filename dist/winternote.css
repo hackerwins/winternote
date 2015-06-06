@@ -31,9 +31,12 @@
 .note-paragraph {
   position: relative;
   margin-bottom: 10px;
+}
+.note-lineview {
+  position: relative;
   height: 22px;
 }
-.note-paragraph-content {
+.note-lineview-content {
   position: absolute;
   z-index: 100;
 }

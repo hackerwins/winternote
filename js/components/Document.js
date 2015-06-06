@@ -36,8 +36,6 @@ module.exports = React.createClass({
       NoteAction.selectEnd(
         self._offsetFromBoundaryPoint(dom.boundaryPointFromEvent(e))
       );
-
-      inputEditor.focus();
     };
 
     window.addEventListener('mousemove', moveHandler);

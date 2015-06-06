@@ -370,7 +370,7 @@ var React = require('react/addons'),
     NoteStore = require('../stores/NoteStore'),
     Toolbar = require('./Toolbar'),
     Statusbar = require('./Statusbar'),
-    Editor = require('./Editor');
+    EditingArea = require('./EditingArea');
 
 module.exports = React.createClass({displayName: "exports",
   getInitialState: function() {
@@ -385,7 +385,7 @@ module.exports = React.createClass({displayName: "exports",
   render: function () {
     return React.createElement("div", {className: "note"}, 
       React.createElement(Toolbar, null), 
-      React.createElement(Editor, {document: this.state.document}), 
+      React.createElement(EditingArea, {document: this.state.document}), 
       React.createElement(Statusbar, {document: this.state.document, selection: this.state.selection})
     );
   },
@@ -403,7 +403,7 @@ module.exports = React.createClass({displayName: "exports",
 });
 
 
-},{"../constants/NoteConstants":12,"../stores/NoteStore":20,"./Editor":6,"./Statusbar":9,"./Toolbar":10,"react/addons":31}],12:[function(require,module,exports){
+},{"../constants/NoteConstants":12,"../stores/NoteStore":20,"./EditingArea":6,"./Statusbar":9,"./Toolbar":10,"react/addons":31}],12:[function(require,module,exports){
 var keyMirror = require('keyMirror');
 
 module.exports = {

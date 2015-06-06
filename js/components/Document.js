@@ -12,7 +12,7 @@ module.exports = React.createClass({
     return <div className='note-document'>
       {_.map(this.props.document.getBody(), function (node, idx) {
         if (node.type === 'p') {
-          return <Paragraph key={idx} runs={node.runs} />;
+          return <Paragraph key={idx} paragraph={node} />;
         }
         // TODO implmements table, ...
       })}

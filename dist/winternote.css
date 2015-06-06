@@ -3,26 +3,55 @@
 .test-border {
   border: 1px solid black;
 }
-/* Layout
+/* note-editor
  --------------------------------------*/
-.note-toolbar {
-  border: 1px solid black;
-}
 .note-editor {
   border: 1px solid black;
 }
-.note-editor .note-document {
+/* note-document
+ --------------------------------------*/
+.note-document {
   border: 1px solid black;
   padding: 10px;
 }
-.note-editor .note-cursor {
+/* document layer z-index
+ --------------------------------------*/
+.note-overlay-under-text {
+  z-index: 90;
+}
+/* note-paragraph
+ --------------------------------------*/
+.note-paragraph {
+  position: relative;
+  margin-bottom: 10px;
+  height: 22px;
+}
+.note-paragraph-content {
+  position: absolute;
+  z-index: 100;
+}
+/* note-selection-overlay
+ --------------------------------------*/
+.note-selection-overlay {
+  position: absolute;
+  background-color: #76a7fa;
+  opacity: 0.5;
+  left: 0;
+  width: 50px;
+  height: 22px;
+}
+/* note-paragraph-content
+ --------------------------------------*/
+/* note-cursor
+ --------------------------------------*/
+.note-cursor {
   position: absolute;
   border-left: 2px solid black;
   left: 120px;
   top: 17px;
   height: 17px;
 }
-.note-editor .note-cursor.note-cursor-blink {
+.note-cursor.note-cursor-blink {
   -webkit-animation: fadeinout 1s infinite;
   -moz-animation: fadeinout 1s infinite;
   -ms-animation: fadeinout 1s infinite;
@@ -83,6 +112,9 @@
   100% {
     opacity: 0;
   }
+}
+.note-toolbar {
+  border: 1px solid black;
 }
 .note-statusbar {
   border: 1px solid black;

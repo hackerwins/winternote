@@ -133,7 +133,7 @@ module.exports = React.createClass({displayName: "exports",
     return React.createElement("div", {className: "note-document"}, 
       _.map(this.props.document.getBody(), function (node, idx) {
         if (node.type === 'p') {
-          return React.createElement(Paragraph, {key: idx, runs: node.runs});
+          return React.createElement(Paragraph, {key: idx, paragraph: node});
         }
         // TODO implmements table, ...
       })
@@ -164,13 +164,16 @@ module.exports = React.createClass({displayName: "exports",
     );
   },
 
+  /**
+   * returns offset From boundaryPoint
+   */
   _offsetFromBoundaryPoint: function (boundaryPoint) {
     // find offset from boundary point
     var component = context.componentByDOMNode(boundaryPoint.container);
-    return NoteStore.getEditor().getDocument().findOffset({
+    return component ? NoteStore.getEditor().getDocument().findOffset({
       stack: [component.props.run],
       offset: boundaryPoint.offset
-    });
+    }) : -1;
   },
 
   _handleMouseDown: function (e) {
@@ -182,6 +185,9 @@ module.exports = React.createClass({displayName: "exports",
     );
 
     var moveHandler = function (e) {
+      // prevent browser selection
+      e.preventDefault();
+
       NoteAction.selectEnd(
         self._offsetFromBoundaryPoint(dom.boundaryPointFromEvent(e))
       );
@@ -312,11 +318,13 @@ module.exports = React.createClass({displayName: "exports",
   },
 
   render: function () {
-    return React.createElement("p", {className: "note-paragraph"}, 
-             _.map(this.props.runs, function (run, idx) {
-               return React.createElement(Textrun, {key: idx, run: run});
-             }), 
-             React.createElement("span", null, " ")
+    return React.createElement("div", {className: "note-paragraph"}, 
+             React.createElement("div", {className: "note-selection-overlay note-overlay-under-text"}), 
+             React.createElement("div", {ref: "content", className: "note-paragraph-content"}, 
+               _.map(this.props.paragraph.runs, function (run, idx) {
+                 return React.createElement(Textrun, {key: idx, run: run});
+               })
+             )
            );
   },
 
@@ -324,14 +332,15 @@ module.exports = React.createClass({displayName: "exports",
     var self = this;
     var selection = NoteStore.getEditor().getSelection();
     var position = selection.getStartPosition();
+    var contentNode = React.findDOMNode(this.refs.content);
 
     // [workaround] to avoid dispatch in the middle of a dispatch
     _.defer(function () {
-      var idx = _.indexOf(self.props.runs, _.last(position.stack));
+      var idx = _.indexOf(self.props.paragraph.runs, _.last(position.stack));
       if (idx !== -1) {
         if (selection.isCollapsed()) {
           RenderAction.renderCursor(dom.rectFromBoundaryPoint({
-            container: self.getDOMNode().childNodes[idx],
+            container: contentNode.childNodes[idx],
             offset: position.offset
           }));
         } else {
@@ -492,9 +501,9 @@ module.exports = {
       text: ' '
     }, {
       type: 'r',
-      text: 'yellow',
+      text: 'blue',
       style: {
-        backgroundColor: 'yellow'
+        color: 'blue'
       }
     }, {
       type: 'r',
@@ -503,8 +512,7 @@ module.exports = {
       type: 'r',
       text: 'green',
       style: {
-        color: 'white',
-        backgroundColor: 'green'
+        color: 'green'
       }
     }]
   }]
@@ -707,14 +715,14 @@ _.extend(Editor.prototype, {
    * @param {Number} offset
    */
   selectStart: function (offset) {
-    this._selection.selectStart(offset);
+    this._selection.selectStart(offset === -1 ? 0 : offset);
   },
 
   /**
    * @param {Number} offset
    */
   selectEnd: function (offset) {
-    this._selection.selectEnd(offset);
+    this._selection.selectEnd(offset === -1 ? 0 : offset);
   },
 
   moveLeft: function () {
@@ -841,6 +849,11 @@ _.extend(Range.prototype, {
     }
   },
 
+  setBoth: function (offset) {
+    this._start = offset;
+    this._end = offset;
+  },
+
   setStart: function (start) {
     this._start = start;
   },
@@ -895,7 +908,12 @@ _.extend(Selection.prototype, {
    * @param {Number} offset
    */
   moveLeft: function (offset) {
-    this._range.shift(offset || -1, this._document.getCharacterCount());
+    // TODO collapse to visible start
+    if (!this.isCollapsed()) {
+      this.collapse(true);
+    } else {
+      this._range.shift(offset || -1, this._document.getCharacterCount());
+    }
   },
 
   /**
@@ -903,7 +921,12 @@ _.extend(Selection.prototype, {
    * @param {Number} offset
    */
   moveRight: function (offset) {
-    this._range.shift(offset || 1, this._document.getCharacterCount());
+    // TODO collapse to visible end
+    if (!this.isCollapsed()) {
+      this.collapse();
+    } else {
+      this._range.shift(offset || 1, this._document.getCharacterCount());
+    }
   },
 
   /**
@@ -926,7 +949,7 @@ _.extend(Selection.prototype, {
    * @param {Number} offset
    */
   selectStart: function (offset) {
-    this._range.setStart(offset);
+    this._range.setBoth(offset);
   },
 
   /**
@@ -1123,6 +1146,9 @@ module.exports = {
 
 
 },{}],24:[function(require,module,exports){
+/**
+ * context util about react mount information.
+ */
 var globalContext = {};
 
 var REACT_ID_ATTRIBUTE = 'data-reactid';

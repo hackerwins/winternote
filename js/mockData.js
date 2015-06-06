@@ -31,9 +31,9 @@ module.exports = {
       text: ' '
     }, {
       type: 'r',
-      text: 'yellow',
+      text: 'blue',
       style: {
-        backgroundColor: 'yellow'
+        color: 'blue'
       }
     }, {
       type: 'r',
@@ -42,8 +42,7 @@ module.exports = {
       type: 'r',
       text: 'green',
       style: {
-        color: 'white',
-        backgroundColor: 'green'
+        color: 'green'
       }
     }]
   }]

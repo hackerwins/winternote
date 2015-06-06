@@ -3,64 +3,46 @@
 
 var React = require('react/addons'),
     _ = require('lodash'),
+    dom = require('../utils/dom'),
     NoteStore = require('../stores/NoteStore'),
     RenderAction = require('../actions/RenderAction');
 
 module.exports = React.createClass({
   componentDidMount: function () {
-    this._triggerRenderCursor();
+    this._handleCursorAndSelection();
   },
 
   componentDidUpdate: function () {
-    this._triggerRenderCursor();
+    this._handleCursorAndSelection();
   },
 
   render: function () {
     return <p className="note-paragraph">
-      {_.map(this.props.runs, function (run, idx) {
-        return <span key={idx} className="note-run" style={run.style}>{run.text.replace(/ /g, '\u00a0')}</span>;
-      })}
-      <span>&nbsp;</span>
-    </p>;
+             {_.map(this.props.runs, function (run, idx) {
+               return <span key={idx} className="note-run" style={run.style}>{run.text.replace(/ /g, '\u00a0')}</span>;
+             })}
+             <span>&nbsp;</span>
+           </p>;
   },
 
-  _triggerRenderCursor: function () {
-    // TODO refactor
-    //  - selection offset to point
+  _handleCursorAndSelection: function () {
+    var self = this;
     var selection = NoteStore.getEditor().getSelection();
-    if (!selection.isCollapsed()) {
-      RenderAction.renderCursor();
-      return;
-    }
-
     var position = selection.getStartPosition();
-    var run = _.last(position.stack);
 
-    var idx = _.indexOf(this.props.runs, run);
-    if (idx !== -1) {
-      var runNode = this.getDOMNode().childNodes[idx];
-      var textNode = runNode.firstChild;
-      var isLeftSide = run.text.length > position.offset;
-      var rect;
-      if (!run.text.length) {
-        rect = runNode.getBoundingClientRect();
-      } else {
-        // TODO textRange for IE8, refactoring
-        var range = document.createRange();
-        if (isLeftSide) {
-          range.setStart(textNode, position.offset);
-          range.setEnd(textNode, position.offset + 1);
+    // [workaround] to avoid dispatch in the middle of a dispatch
+    _.defer(function () {
+      var idx = _.indexOf(self.props.runs, _.last(position.stack));
+      if (idx !== -1) {
+        if (selection.isCollapsed()) {
+          RenderAction.renderCursor(dom.rectFromBoundaryPoint({
+            container: self.getDOMNode().childNodes[idx],
+            offset: position.offset
+          }));
         } else {
-          range.setStart(textNode, position.offset - 1);
-          range.setEnd(textNode, position.offset);
+          RenderAction.renderCursor();
         }
-        rect = range.getBoundingClientRect();
       }
-
-      RenderAction.renderCursor({
-        left: isLeftSide ? rect.left : rect.right,
-        top: rect.top
-      });
-    }
+    });
   }
 });

@@ -34,8 +34,7 @@ ViewStore.dispatchToken = NoteDispatcher.register(function (action) {
 
   switch (action.actionType) {
     case NoteConstants.ACTION.RENDER_CURSOR:
-      NoteDispatcher.waitFor([NoteStore.dispatchToken]);
-      view.setCursorRect(action.rect);
+      view.setCursorPoint(action.point);
       ViewStore.emitChange(NoteConstants.EVENT.RENDER);
       break;
   }

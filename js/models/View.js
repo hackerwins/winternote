@@ -5,8 +5,8 @@ var View = function () {
 };
 
 _.extend(View.prototype, {
-  setCursorRect: function (rect) {
-    this._data.cursor = rect;
+  setCursorPoint: function (point) {
+    this._data.cursor = point;
   },
 
   getData: function () {

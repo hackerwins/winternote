@@ -1,3 +1,6 @@
+/**
+ * context util about react mount information.
+ */
 var globalContext = {};
 
 var REACT_ID_ATTRIBUTE = 'data-reactid';

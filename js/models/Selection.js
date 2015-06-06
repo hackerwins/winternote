@@ -29,7 +29,12 @@ _.extend(Selection.prototype, {
    * @param {Number} offset
    */
   moveLeft: function (offset) {
-    this._range.shift(offset || -1, this._document.getCharacterCount());
+    // TODO collapse to visible start
+    if (!this.isCollapsed()) {
+      this.collapse(true);
+    } else {
+      this._range.shift(offset || -1, this._document.getCharacterCount());
+    }
   },
 
   /**
@@ -37,7 +42,12 @@ _.extend(Selection.prototype, {
    * @param {Number} offset
    */
   moveRight: function (offset) {
-    this._range.shift(offset || 1, this._document.getCharacterCount());
+    // TODO collapse to visible end
+    if (!this.isCollapsed()) {
+      this.collapse();
+    } else {
+      this._range.shift(offset || 1, this._document.getCharacterCount());
+    }
   },
 
   /**
@@ -60,7 +70,7 @@ _.extend(Selection.prototype, {
    * @param {Number} offset
    */
   selectStart: function (offset) {
-    this._range.setStart(offset);
+    this._range.setBoth(offset);
   },
 
   /**

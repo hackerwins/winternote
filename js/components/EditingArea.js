@@ -37,6 +37,9 @@ module.exports = React.createClass({
     );
 
     var moveHandler = function (e) {
+      // prevent browser selection
+      e.preventDefault();
+
       NoteAction.selectEnd(
         self._offsetFromBoundaryPoint(dom.boundaryPointFromEvent(e))
       );

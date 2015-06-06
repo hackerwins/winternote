@@ -43,6 +43,11 @@ _.extend(Range.prototype, {
     }
   },
 
+  setBoth: function (offset) {
+    this._start = offset;
+    this._end = offset;
+  },
+
   setStart: function (start) {
     this._start = start;
   },

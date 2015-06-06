@@ -96,7 +96,10 @@ module.exports = React.createClass({displayName: "exports",
   },
 
   render: function () {
-    var style = this.state.cursor;
+    var style = _.defaults({
+      display: this.state.cursor ? 'block' : 'none'
+    }, this.state.cursor)
+
     // TODO addClass note-cursor-blink after 500ms for blink cursor
     return React.createElement("div", {className: "note-cursor", style: style});
   },
@@ -121,11 +124,42 @@ module.exports = React.createClass({displayName: "exports",
 
 var React = require('react/addons'),
     _ = require('lodash'),
-    NoteAction = require('../actions/NoteAction'),
-    dom = require('../utils/dom'),
     Paragraph = require('./Paragraph');
 
 module.exports = React.createClass({displayName: "exports",
+  render: function () {
+    return React.createElement("div", {className: "note-document"}, 
+      _.map(this.props.document.getBody(), function (node, idx) {
+        if (node.type === 'p') {
+          return React.createElement(Paragraph, {key: idx, runs: node.runs});
+        }
+        // TODO implmements table, ...
+      })
+    );
+  }
+});
+
+
+},{"./Paragraph":8,"lodash":30,"react/addons":31}],6:[function(require,module,exports){
+/*jshint node: true*/
+'use strict';
+
+var React = require('react/addons'),
+    dom = require('../utils/dom'),
+    NoteAction = require('../actions/NoteAction'),
+    Document = require('./Document'),
+    Cursor = require('./Cursor'),
+    InputEditor = require('./InputEditor');
+
+module.exports = React.createClass({displayName: "exports",
+  render: function () {
+    return React.createElement("div", {className: "note-editor", onMouseDown: this._handleMouseDown}, 
+      React.createElement(Cursor, null), 
+      React.createElement(Document, {document: this.props.document}), 
+      React.createElement(InputEditor, {ref: "inputEditor"})
+    );
+  },
+
   _offsetFromBoundaryPoint: function (boundaryPoint) {
     // TODO find document offset
     //  - node -> react component -> state object -> document offset
@@ -133,7 +167,7 @@ module.exports = React.createClass({displayName: "exports",
     return 1;
   },
 
-  handleMouseDown: function (e) {
+  _handleMouseDown: function (e) {
     var self = this;
     var inputEditor = this.refs.inputEditor;
 
@@ -154,46 +188,17 @@ module.exports = React.createClass({displayName: "exports",
       NoteAction.selectEnd(
         self._offsetFromBoundaryPoint(dom.boundaryPointFromEvent(e))
       );
+
+      inputEditor.focus();
     };
 
     window.addEventListener('mousemove', moveHandler);
     window.addEventListener('mouseup', upHandler);
-  },
-
-  render: function () {
-    return React.createElement("div", {className: "note-document", onMouseDown: this.handleMouseDown}, 
-      _.map(this.props.document.getBody(), function (node, idx) {
-        if (node.type === 'p') {
-          return React.createElement(Paragraph, {key: idx, runs: node.runs});
-        }
-        // TODO implmements table, ...
-      })
-    );
   }
 });
 
 
-},{"../actions/NoteAction":2,"../utils/dom":23,"./Paragraph":8,"lodash":30,"react/addons":31}],6:[function(require,module,exports){
-/*jshint node: true*/
-'use strict';
-
-var React = require('react/addons'),
-    Document = require('./Document'),
-    Cursor = require('./Cursor'),
-    InputEditor = require('./InputEditor');
-
-module.exports = React.createClass({displayName: "exports",
-  render: function () {
-    return React.createElement("div", {className: "note-editor"}, 
-      React.createElement(Cursor, null), 
-      React.createElement(Document, {document: this.props.document}), 
-      React.createElement(InputEditor, {ref: "inputEditor"})
-    );
-  }
-});
-
-
-},{"./Cursor":4,"./Document":5,"./InputEditor":7,"react/addons":31}],7:[function(require,module,exports){
+},{"../actions/NoteAction":2,"../utils/dom":23,"./Cursor":4,"./Document":5,"./InputEditor":7,"react/addons":31}],7:[function(require,module,exports){
 /*jshint node: true*/
 'use strict';
 

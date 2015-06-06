@@ -20,7 +20,10 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var style = this.state.cursor;
+    var style = _.defaults({
+      display: this.state.cursor ? 'block' : 'none'
+    }, this.state.cursor);
+
     // TODO addClass note-cursor-blink after 500ms for blink cursor
     return <div className='note-cursor' style={style}></div>;
   },

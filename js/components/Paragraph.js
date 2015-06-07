@@ -20,15 +20,36 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    // TODO build lineviews per paragraph
+    var self = this;
+    var splitRunLists = this._splitIntoLines(this.props.paragraph.runs, this.props.width);
     return <div className="note-paragraph">
-             <div className="note-lineview">
-               <div className="note-selection-overlay note-overlay-under-text"></div>
-               <div ref="content" className="note-lineview-content">
-                 {_.map(this.props.paragraph.runs, function (run, idx) {
-                   return <Textrun key={idx} run={run} />;
-                 })}
-               </div>
+             {_.map(splitRunLists, function (runs, idx) {
+               return self._createLineView(runs, idx);
+             })}
+           </div>;
+  },
+
+  /**
+   * @param {Textrun[]} runs
+   * @param Number width
+   * @return {Textrun[][]}
+   */
+  _splitIntoLines: function (runs, width) {
+    // TODO split runs into lines
+    return [runs];
+  },
+
+  /**
+   * @param {Textrun[]} runs
+   * @return {ReactElement}
+   */
+  _createLineView: function (runs, idx) {
+    return <div key={idx} className="note-lineview">
+             <div className="note-selection-overlay note-overlay-under-text"></div>
+             <div ref="content" className="note-lineview-content">
+               {_.map(runs, function (run, idx) {
+                 return <Textrun key={idx} run={run} />;
+               })}
              </div>
            </div>;
   },

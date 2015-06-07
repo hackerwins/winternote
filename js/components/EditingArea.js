@@ -21,14 +21,30 @@ module.exports = React.createClass({
 
   /**
    * returns offset From boundaryPoint
+   * @param {BoundaryPoint} boundaryPoint
+   * @return {Number}
    */
   _offsetFromBoundaryPoint: function (boundaryPoint) {
-    // find offset from boundary point
     var component = context.componentByDOMNode(boundaryPoint.container);
-    return component ? NoteStore.getEditor().getDocument().findOffset({
-      stack: [component.props.run],
-      offset: boundaryPoint.offset
-    }) : -1;
+
+    if (!component) {
+      return -1;
+    }
+
+    var position;
+    if (component.props.paragraph) { // paragraph
+      position = {
+        stack: [component.props.paragraph.runs[boundaryPoint.offset]],
+        offset: 0
+      };
+    } else if (component.props.run) { // textrun
+      var position = {
+        stack: [component.props.run],
+        offset: boundaryPoint.offset
+      }
+    }
+
+    return NoteStore.getEditor().getDocument().findOffset(position);
   },
 
   _handleMouseDown: function (e) {

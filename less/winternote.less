@@ -25,6 +25,7 @@
 .note-editing-area {
   position: relative;
   height: 300px;
+
   // for test
   .test-border;
 }
@@ -34,6 +35,12 @@
 .note-ime {
   position: absolute;
   bottom: 0;
+}
+
+/* note-editing-area
+ --------------------------------------*/
+.note-editing-area {
+  cursor: text;
 }
 
 
@@ -67,6 +74,9 @@
 .note-lineview-content {
   position: absolute;
   z-index: 100;
+
+  // for test
+  width: 100%;
 }
 
 /* note-selection-overlay
@@ -75,6 +85,7 @@
   position: absolute;
   background-color: #76a7fa;
   opacity: 0.5;
+
   // for test
   left: 0;
   width: 100%;

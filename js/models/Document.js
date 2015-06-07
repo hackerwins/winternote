@@ -46,7 +46,7 @@ _.extend(Document.prototype, {
 
       stack.push(node);
 
-      if ((info = callback(node, stack, offset))) {
+      if (typeof (info = callback(node, stack, offset)) !== 'undefined') {
         return info;
       }
 
@@ -63,7 +63,7 @@ _.extend(Document.prototype, {
       if (self._isContainer(node)) {
         items = self._getItems(node);
         for (var idx = 0; idx < items.length; idx++) {
-          if ((info = _traverse(items[idx]))) {
+          if (typeof (info = _traverse(items[idx])) !== 'undefined') {
             return info;
           }
         }

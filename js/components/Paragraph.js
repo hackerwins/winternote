@@ -29,14 +29,66 @@ module.exports = React.createClass({
            </div>;
   },
 
+  _getCharWidth: function (ch, run) {
+    // implements with view render
+    return 8;
+  },
+
+  /**
+   * @param {Textrun[]} runs
+   * @param {Number} width
+   */
+  _getBreakPoints: function (runs, width) {
+    var breakPoints = [];
+
+    // [for performance]
+    var stackWidth = 0, run, charWidth;
+    for (var i = 0; i < runs.length; i++) {
+      run = runs[i];
+      for (var idx = 0; idx < run.text.length; idx++) {
+        charWidth = this._getCharWidth(run.text.charAt(idx), run)
+        stackWidth += charWidth;
+        if (stackWidth > width) {
+          breakPoints.push({
+            run: i,
+            ch: idx - 1
+          });
+          stackWidth = charWidth;
+        }
+      }
+    }
+
+    return breakPoints;
+  },
+
   /**
    * @param {Textrun[]} runs
    * @param Number width
    * @return {Textrun[][]}
    */
   _splitIntoLines: function (runs, width) {
-    // TODO split runs into lines
-    return [runs];
+    var lines = [];
+    var points = this._getBreakPoints(runs, width);
+
+    if (!points.length) {
+      return [runs];
+    }
+
+    runs = _.clone(runs);
+    _.each(points, function (point) {
+      var run = runs[point.run];
+      var isSplit = run.text.length > point.ch;
+      var line = runs.splice(0, point.run + 1)
+      lines.push(line);;
+
+      if (isSplit) {
+        runs.unshift(_.clone(run));
+        // _.head(runs).text = _.head(runs).text.substr(point.ch);
+        // _.last(line).text = _.last(line).text.substr(0, point.ch);
+      }
+    });
+
+    return lines;
   },
 
   /**

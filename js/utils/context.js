@@ -46,4 +46,4 @@ var componentByDOMNode = function (node) {
 module.exports = {
   mixin: ContextMixin,
   componentByDOMNode: componentByDOMNode
-}
+};

@@ -38,10 +38,10 @@ module.exports = React.createClass({
         offset: 0
       };
     } else if (component.props.run) { // textrun
-      var position = {
+      position = {
         stack: [component.props.run],
         offset: boundaryPoint.offset
-      }
+      };
     }
 
     return NoteStore.getEditor().getDocument().findOffset(position);

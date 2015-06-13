@@ -1,6 +1,5 @@
 var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     NoteConstants = require('../constants/NoteConstants'),
-    NoteStore = require('./NoteStore'),
     EventEmitter = require('events').EventEmitter,
     _ = require('lodash'),
     View = require('../models/View');

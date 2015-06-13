@@ -3,8 +3,7 @@
 
 var React = require('react/addons'),
     ViewStore = require('../stores/ViewStore'),
-    NoteConstants = require('../constants/NoteConstants'),
-    _ = require('lodash');
+    NoteConstants = require('../constants/NoteConstants');
 
 module.exports = React.createClass({
   getInitialState: function() {
@@ -20,7 +19,6 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var point = this.state.cursor;
     // TODO refactor editingArea rect
     var editingArea = document.getElementsByClassName('note-editing-area')[0];
     var rect = editingArea && editingArea.getBoundingClientRect();

@@ -42,6 +42,8 @@ var rectFromBoundaryPoint = function (boundaryPoint) {
   var textNode = container.firstChild;
   var textLength = textNode ? textNode.nodeValue.length : 0;
   var isLeftSide = textLength > offset;
+
+  var rect;
   if (!textLength) {
     rect = container.getBoundingClientRect();
   } else {

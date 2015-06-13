@@ -46,7 +46,7 @@ module.exports = React.createClass({
     for (var i = 0; i < runs.length; i++) {
       run = runs[i];
       for (var idx = 0; idx < run.text.length; idx++) {
-        charWidth = this._getCharWidth(run.text.charAt(idx), run)
+        charWidth = this._getCharWidth(run.text.charAt(idx), run);
         stackWidth += charWidth;
         if (stackWidth > width) {
           breakPoints.push({
@@ -78,8 +78,8 @@ module.exports = React.createClass({
     _.each(points, function (point) {
       var run = runs[point.run];
       var isSplit = run.text.length > point.ch;
-      var line = runs.splice(0, point.run + 1)
-      lines.push(line);;
+      var line = runs.splice(0, point.run + 1);
+      lines.push(line);
 
       if (isSplit) {
         runs.unshift(_.clone(run));

@@ -2,7 +2,6 @@
 'use strict';
 
 var React = require('react/addons'),
-    _ = require('lodash'),
     agent = require('../utils/agent'),
     NoteAction = require('../actions/NoteAction');
 

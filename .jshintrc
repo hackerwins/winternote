@@ -16,9 +16,8 @@
   "maxstatements": 300,
   "maxlen": 140,
   "evil": true,
-  "browser": true,
   "devel": true,
-  "node": true,
+  "browserify": true,
   "worker": true,
   "globals": {
     "jest": true,

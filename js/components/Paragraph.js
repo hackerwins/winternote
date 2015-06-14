@@ -30,7 +30,7 @@ module.exports = React.createClass({
            </div>;
   },
 
-  _getCharWidth: function (ch, run) {
+  _getCharWidth: function (/*ch, run*/) {
     // implements with view render
     return 8;
   },

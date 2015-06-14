@@ -100,10 +100,8 @@ _.extend(Editor.prototype, {
   insertParagraph: function () {
     var position = this._selection.getStartPosition();
 
-    var offset = position.offset;
     var doc = position.stack[0];
     var para = position.stack[1];
-    var run = position.stack[2];
 
     // TODO split text
     doc.body.splice(doc.body.indexOf(para) + 1, 0, this._document.createParagraph());

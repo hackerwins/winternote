@@ -1,4 +1,4 @@
-/*jshint node: true*/
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons'),
@@ -7,6 +7,7 @@ var React = require('react/addons'),
     context = require('../utils/context');
 
 module.exports = React.createClass({
+  displayName: 'Document',
   mixins: [context.mixin],
   render: function () {
     // XXX compute document width

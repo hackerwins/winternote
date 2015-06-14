@@ -1,4 +1,4 @@
-/*jshint node: true*/
+/*jshint browser: true, quotmark: false*/
 'use strict';
 
 var React = require('react/addons'),
@@ -11,6 +11,7 @@ var React = require('react/addons'),
     InputEditor = require('./InputEditor');
 
 module.exports = React.createClass({
+  displayName: 'EditingArea',
   render: function () {
     return <div className='note-editing-area' onMouseDown={this._handleMouseDown}>
       <Cursor />

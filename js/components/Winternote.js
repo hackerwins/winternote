@@ -1,4 +1,4 @@
-/*jshint node: true*/
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons'),
@@ -9,6 +9,7 @@ var React = require('react/addons'),
     EditingArea = require('./EditingArea');
 
 module.exports = React.createClass({
+  displayName: 'Winternote',
   getInitialState: function() {
     return this._getState();
   },

@@ -1,4 +1,4 @@
-/*jshint node: true*/
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons'),
@@ -6,6 +6,8 @@ var React = require('react/addons'),
     NoteConstants = require('../constants/NoteConstants');
 
 module.exports = React.createClass({
+  displayName: 'Cursor',
+
   getInitialState: function() {
     return this._getState();
   },

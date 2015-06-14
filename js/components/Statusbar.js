@@ -1,9 +1,10 @@
-/*jshint node: true*/
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons');
 
 module.exports = React.createClass({
+  displayName: 'Statusbar',
   render: function () {
     var selectionInfo = this.props.selection.inspect();
     var bodyInfo = this.props.document.inspect();

@@ -1,4 +1,4 @@
-/*jshint node: true*/
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons'),
@@ -10,6 +10,7 @@ var React = require('react/addons'),
     RenderAction = require('../actions/RenderAction');
 
 module.exports = React.createClass({
+  displayName: 'Paragraph',
   mixins: [context.mixin],
   componentDidMount: function () {
     this._handleCursor();

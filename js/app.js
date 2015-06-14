@@ -1,4 +1,4 @@
-/*jshint node:true, browser: true*/
+/*jshint browser: true*/
 
 var React = require('react/addons'),
     Winternote = require('./components/Winternote');

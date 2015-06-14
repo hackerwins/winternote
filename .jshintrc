@@ -18,15 +18,12 @@
   "evil": true,
   "browser": true,
   "devel": true,
-  "jquery": true,
   "node": true,
   "worker": true,
-  "es3": true,
   "globals": {
-    "define": true,
-    "test": true,
-    "ok": true,
-    "equal": true,
-    "deepEqual": true
+    "jest": true,
+    "describe": true,
+    "it": true,
+    "expect": true
   }
 }

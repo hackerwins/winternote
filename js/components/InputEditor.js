@@ -1,4 +1,4 @@
-/*jshint node: true*/
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons'),
@@ -6,6 +6,7 @@ var React = require('react/addons'),
     NoteAction = require('../actions/NoteAction');
 
 module.exports = React.createClass({
+  displayName: 'InputEditor',
   componentDidMount: function () {
     this.focus();
   },

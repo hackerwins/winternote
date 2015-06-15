@@ -15,8 +15,22 @@ var pointFromEvent = function (event) {
  * @param {Point}
  * @return {NativeRange}
  */
-var caretRangeFromPoint = function (point) {
-  return document.caretRangeFromPoint(point.x, point.y);
+var caretPositionFromPoint = function (point) {
+  // for Firefox
+  if (document.caretPositionFromPoint) {
+    var offsetPoint = document.caretPositionFromPoint(point.x, point.y);
+    return {
+      container: offsetPoint.offsetNode,
+      offset: offsetPoint.offset
+    };
+  // for Webkit
+  } else if (document.caretRangeFromPoint) {
+    var range = document.caretRangeFromPoint(point.x, point.y);
+    return {
+      container: range.startContainer,
+      offset: range.startOffset
+    };
+  }
 };
 
 /**
@@ -24,11 +38,7 @@ var caretRangeFromPoint = function (point) {
  * @return {BoundaryPoint}
  */
 var boundaryPointFromEvent = function (event) {
-  var range = caretRangeFromPoint(pointFromEvent(event));
-  return {
-    container: range.startContainer,
-    offset: range.startOffset
-  };
+  return caretPositionFromPoint(pointFromEvent(event));
 };
 
 /**

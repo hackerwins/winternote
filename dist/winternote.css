@@ -62,9 +62,10 @@
  --------------------------------------*/
 .note-cursor {
   position: absolute;
-  border-left: 2px solid black;
-  left: 120px;
+  border-right: 2px solid black;
+  left: 0px;
   top: 17px;
+  width: 17px;
   height: 17px;
 }
 .note-cursor.note-cursor-blink {
@@ -128,6 +129,9 @@
   100% {
     opacity: 0;
   }
+}
+.note-cursor.note-cursor-composition {
+  border-bottom: 2px solid black;
 }
 .note-toolbar {
   border: 1px solid black;

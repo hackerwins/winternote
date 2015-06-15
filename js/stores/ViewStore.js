@@ -36,6 +36,10 @@ ViewStore.dispatchToken = NoteDispatcher.register(function (action) {
       view.setCursorPoint(action.point);
       ViewStore.emitChange(NoteConstants.EVENT.RENDER);
       break;
+    case NoteConstants.ACTION.RENDER_COMPOSITION:
+      view.setComposition(action.isComposition);
+      ViewStore.emitChange(NoteConstants.EVENT.RENDER);
+      break;
   }
 });
 

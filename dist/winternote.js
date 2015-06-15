@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/*jshint node:true, browser: true*/
+/*jshint browser: true*/
 
 var React = require('react/addons'),
     Winternote = require('./components/Winternote');
@@ -69,20 +69,27 @@ module.exports = {
       actionType: NoteConstants.ACTION.RENDER_CURSOR,
       point: point
     });
+  },
+  renderComposition: function (isComposition) {
+    NoteDispatcher.dispatch({
+      actionType: NoteConstants.ACTION.RENDER_COMPOSITION,
+      isComposition: isComposition
+    });
   }
 };
 
 
 },{"../constants/NoteConstants":13,"../dispatcher/NoteDispatcher":14}],4:[function(require,module,exports){
-/*jshint node: true*/
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons'),
     ViewStore = require('../stores/ViewStore'),
-    NoteConstants = require('../constants/NoteConstants'),
-    _ = require('lodash');
+    NoteConstants = require('../constants/NoteConstants');
 
-module.exports = React.createClass({displayName: "exports",
+module.exports = React.createClass({
+  displayName: 'Cursor',
+
   getInitialState: function() {
     return this._getState();
   },
@@ -96,16 +103,19 @@ module.exports = React.createClass({displayName: "exports",
   },
 
   render: function () {
-    var point = this.state.cursor;
     // TODO refactor editingArea rect
     var editingArea = document.getElementsByClassName('note-editing-area')[0];
     var rect = editingArea && editingArea.getBoundingClientRect();
+    var classes = React.addons.classSet({
+      'note-cursor': true,
+      'note-cursor-composition': this.state.isComposition
+    });
 
     var style;
     if (this.state.cursor) {
       style = {
         display: 'block',
-        left: this.state.cursor.left - rect.left,
+        left: this.state.cursor.left - rect.left - 17,
         top: this.state.cursor.top - rect.top
       };
     } else {
@@ -115,7 +125,7 @@ module.exports = React.createClass({displayName: "exports",
     }
 
     // TODO addClass note-cursor-blink after 500ms for blink cursor
-    return React.createElement("div", {className: "note-cursor", style: style});
+    return React.createElement("div", {className: classes, style: style});
   },
 
   _onChange: function () {
@@ -126,14 +136,15 @@ module.exports = React.createClass({displayName: "exports",
     var data = ViewStore.getData();
 
     return {
-      cursor: data.cursor
+      cursor: data.cursor,
+      isComposition: data.isComposition
     };
   }
 });
 
 
-},{"../constants/NoteConstants":13,"../stores/ViewStore":22,"lodash":32,"react/addons":33}],5:[function(require,module,exports){
-/*jshint node: true*/
+},{"../constants/NoteConstants":13,"../stores/ViewStore":22,"react/addons":33}],5:[function(require,module,exports){
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons'),
@@ -141,7 +152,8 @@ var React = require('react/addons'),
     Paragraph = require('./Paragraph'),
     context = require('../utils/context');
 
-module.exports = React.createClass({displayName: "exports",
+module.exports = React.createClass({
+  displayName: 'Document',
   mixins: [context.mixin],
   render: function () {
     // XXX compute document width
@@ -161,7 +173,7 @@ module.exports = React.createClass({displayName: "exports",
 
 
 },{"../utils/context":24,"./Paragraph":8,"lodash":32,"react/addons":33}],6:[function(require,module,exports){
-/*jshint node: true*/
+/*jshint browser: true, quotmark: false*/
 'use strict';
 
 var React = require('react/addons'),
@@ -173,7 +185,8 @@ var React = require('react/addons'),
     Cursor = require('./Cursor'),
     InputEditor = require('./InputEditor');
 
-module.exports = React.createClass({displayName: "exports",
+module.exports = React.createClass({
+  displayName: 'EditingArea',
   render: function () {
     return React.createElement("div", {className: "note-editing-area", onMouseDown: this._handleMouseDown}, 
       React.createElement(Cursor, null), 
@@ -201,10 +214,10 @@ module.exports = React.createClass({displayName: "exports",
         offset: 0
       };
     } else if (component.props.run) { // textrun
-      var position = {
+      position = {
         stack: [component.props.run],
         offset: boundaryPoint.offset
-      }
+      };
     }
 
     return NoteStore.getEditor().getDocument().findOffset(position);
@@ -245,15 +258,16 @@ module.exports = React.createClass({displayName: "exports",
 
 
 },{"../actions/NoteAction":2,"../stores/NoteStore":21,"../utils/context":24,"../utils/dom":25,"./Cursor":4,"./Document":5,"./InputEditor":7,"react/addons":33}],7:[function(require,module,exports){
-/*jshint node: true*/
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons'),
-    _ = require('lodash'),
     agent = require('../utils/agent'),
-    NoteAction = require('../actions/NoteAction');
+    NoteAction = require('../actions/NoteAction'),
+    RenderAction = require('../actions/RenderAction');
 
-module.exports = React.createClass({displayName: "exports",
+module.exports = React.createClass({
+  displayName: 'InputEditor',
   componentDidMount: function () {
     this.focus();
   },
@@ -280,6 +294,7 @@ module.exports = React.createClass({displayName: "exports",
     this._reset();
     // insert dummy text for next composition update.
     NoteAction.insertText(' ');
+    RenderAction.renderComposition(true);
   },
 
   _handleCompositionUpdate: function (e) {
@@ -288,6 +303,8 @@ module.exports = React.createClass({displayName: "exports",
   },
 
   _handleCompositionEnd: function (e) {
+    RenderAction.renderComposition(false);
+
     // [workaround] for webkit
     //  - Firefox trigger compositionupdate with a same character of compositionend
     //  - when composition ended. Opposite of Firefox, webkit skip compositionupdate,
@@ -329,8 +346,8 @@ module.exports = React.createClass({displayName: "exports",
 });
 
 
-},{"../actions/NoteAction":2,"../utils/agent":23,"lodash":32,"react/addons":33}],8:[function(require,module,exports){
-/*jshint node: true*/
+},{"../actions/NoteAction":2,"../actions/RenderAction":3,"../utils/agent":23,"react/addons":33}],8:[function(require,module,exports){
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons'),
@@ -341,7 +358,8 @@ var React = require('react/addons'),
     NoteStore = require('../stores/NoteStore'),
     RenderAction = require('../actions/RenderAction');
 
-module.exports = React.createClass({displayName: "exports",
+module.exports = React.createClass({
+  displayName: 'Paragraph',
   mixins: [context.mixin],
   componentDidMount: function () {
     this._handleCursor();
@@ -361,7 +379,7 @@ module.exports = React.createClass({displayName: "exports",
            );
   },
 
-  _getCharWidth: function (ch, run) {
+  _getCharWidth: function (/*ch, run*/) {
     // implements with view render
     return 8;
   },
@@ -378,7 +396,7 @@ module.exports = React.createClass({displayName: "exports",
     for (var i = 0; i < runs.length; i++) {
       run = runs[i];
       for (var idx = 0; idx < run.text.length; idx++) {
-        charWidth = this._getCharWidth(run.text.charAt(idx), run)
+        charWidth = this._getCharWidth(run.text.charAt(idx), run);
         stackWidth += charWidth;
         if (stackWidth > width) {
           breakPoints.push({
@@ -398,29 +416,31 @@ module.exports = React.createClass({displayName: "exports",
    * @param Number width
    * @return {Textrun[][]}
    */
-  _splitIntoLines: function (runs, width) {
-    var lines = [];
-    var points = this._getBreakPoints(runs, width);
+  _splitIntoLines: function (runs/*, width*/) {
+    return [runs];
 
-    if (!points.length) {
-      return [runs];
-    }
+    // var lines = [];
+    // var points = this._getBreakPoints(runs, width);
 
-    runs = _.clone(runs);
-    _.each(points, function (point) {
-      var run = runs[point.run];
-      var isSplit = run.text.length > point.ch;
-      var line = runs.splice(0, point.run + 1)
-      lines.push(line);;
+    // if (!points.length) {
+    //   return [runs];
+    // }
 
-      if (isSplit) {
-        runs.unshift(_.clone(run));
-        // _.head(runs).text = _.head(runs).text.substr(point.ch);
-        // _.last(line).text = _.last(line).text.substr(0, point.ch);
-      }
-    });
+    // runs = _.clone(runs);
+    // _.each(points, function (point) {
+    //   var run = runs[point.run];
+    //   var isSplit = run.text.length > point.ch;
+    //   var line = runs.splice(0, point.run + 1);
+    //   lines.push(line);
 
-    return lines;
+    //   if (isSplit) {
+    //     runs.unshift(_.clone(run));
+    //     // _.head(runs).text = _.head(runs).text.substr(point.ch);
+    //     // _.last(line).text = _.last(line).text.substr(0, point.ch);
+    //   }
+    // });
+
+    // return lines;
   },
 
   /**
@@ -465,12 +485,13 @@ module.exports = React.createClass({displayName: "exports",
 
 
 },{"../actions/RenderAction":3,"../stores/NoteStore":21,"../utils/context":24,"../utils/dom":25,"./Textrun":10,"lodash":32,"react/addons":33}],9:[function(require,module,exports){
-/*jshint node: true*/
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons');
 
-module.exports = React.createClass({displayName: "exports",
+module.exports = React.createClass({
+  displayName: 'Statusbar',
   render: function () {
     var selectionInfo = this.props.selection.inspect();
     var bodyInfo = this.props.document.inspect();
@@ -484,10 +505,13 @@ module.exports = React.createClass({displayName: "exports",
 
 
 },{"react/addons":33}],10:[function(require,module,exports){
+/*jshint browser: true, quotmark:false*/
+
 var React = require('react/addons'),
     context = require('../utils/context');
 
-module.exports = React.createClass({displayName: "exports",
+module.exports = React.createClass({
+  displayName: 'Textrun',
   mixins: [context.mixin],
   render: function () {
     var run = this.props.run;
@@ -498,12 +522,13 @@ module.exports = React.createClass({displayName: "exports",
 
 
 },{"../utils/context":24,"react/addons":33}],11:[function(require,module,exports){
-/*jshint node: true*/
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons');
 
-module.exports = React.createClass({displayName: "exports",
+module.exports = React.createClass({
+  displayName: 'Toolbar',
   render: function () {
     return React.createElement("div", {className: "note-toolbar"}, "Toolbar");
   }
@@ -511,7 +536,7 @@ module.exports = React.createClass({displayName: "exports",
 
 
 },{"react/addons":33}],12:[function(require,module,exports){
-/*jshint node: true*/
+/*jshint browser: true, quotmark:false*/
 'use strict';
 
 var React = require('react/addons'),
@@ -521,7 +546,8 @@ var React = require('react/addons'),
     Statusbar = require('./Statusbar'),
     EditingArea = require('./EditingArea');
 
-module.exports = React.createClass({displayName: "exports",
+module.exports = React.createClass({
+  displayName: 'Winternote',
   getInitialState: function() {
     return this._getState();
   },
@@ -565,7 +591,8 @@ module.exports = {
     UPDATE_TEXT: null,
     INSERT_PARAGRAPH: null,
     BACKSPACE: null,
-    RENDER_CURSOR: null
+    RENDER_CURSOR: null,
+    RENDER_COMPOSITION: null
   }),
   EVENT: keyMirror({
     DOCUMENT: null,
@@ -592,7 +619,7 @@ module.exports = {
     type: 'p',
     runs: [{
       type: 'r',
-      text: 'Winding its way among countless islands, and imbedded in mountains, the "holy lake" extended a dozen leagues still further to the south. With the high plain that there interposed itself to the further passage of the water, commenced a portage of as many miles, which conducted the adventurer to the banks of the Hudson, at a point where, with the usual obstructions of the rapids, or rifts, as they were then termed in the language of the country, the river became navigable to the tide.'
+      text: 'Winding its way among countless islands, and imbedded in mountains, the "holy lake" extended a dozen leagues still further to the south. With the high plain that there interposed itself to the further passage of the water, commenced a portage of as many miles, which conducted the adventurer to the banks of the Hudson, at a point where, with the usual obstructions of the rapids, or rifts, as they were then termed in the language of the country, the river became navigable to the tide.' // jshint ignore:line
     }]
   }, {
     type: 'p',
@@ -901,10 +928,8 @@ _.extend(Editor.prototype, {
   insertParagraph: function () {
     var position = this._selection.getStartPosition();
 
-    var offset = position.offset;
     var doc = position.stack[0];
     var para = position.stack[1];
-    var run = position.stack[2];
 
     // TODO split text
     doc.body.splice(doc.body.indexOf(para) + 1, 0, this._document.createParagraph());
@@ -1121,6 +1146,10 @@ _.extend(View.prototype, {
     this._data.cursor = point;
   },
 
+  setComposition: function (isComposition) {
+    this._data.isComposition = isComposition;
+  },
+
   getData: function () {
     return this._data;
   }
@@ -1202,7 +1231,6 @@ module.exports = NoteStore;
 },{"../constants/NoteConstants":13,"../dispatcher/NoteDispatcher":14,"../mockData":15,"../models/Editor":17,"events":26,"lodash":32}],22:[function(require,module,exports){
 var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     NoteConstants = require('../constants/NoteConstants'),
-    NoteStore = require('./NoteStore'),
     EventEmitter = require('events').EventEmitter,
     _ = require('lodash'),
     View = require('../models/View');
@@ -1239,13 +1267,17 @@ ViewStore.dispatchToken = NoteDispatcher.register(function (action) {
       view.setCursorPoint(action.point);
       ViewStore.emitChange(NoteConstants.EVENT.RENDER);
       break;
+    case NoteConstants.ACTION.RENDER_COMPOSITION:
+      view.setComposition(action.isComposition);
+      ViewStore.emitChange(NoteConstants.EVENT.RENDER);
+      break;
   }
 });
 
 module.exports = ViewStore;
 
 
-},{"../constants/NoteConstants":13,"../dispatcher/NoteDispatcher":14,"../models/View":20,"./NoteStore":21,"events":26,"lodash":32}],23:[function(require,module,exports){
+},{"../constants/NoteConstants":13,"../dispatcher/NoteDispatcher":14,"../models/View":20,"events":26,"lodash":32}],23:[function(require,module,exports){
 /*jshint node:true, browser: true*/
 
 var userAgent = navigator.userAgent;
@@ -1306,7 +1338,7 @@ var componentByDOMNode = function (node) {
 module.exports = {
   mixin: ContextMixin,
   componentByDOMNode: componentByDOMNode
-}
+};
 
 
 },{}],25:[function(require,module,exports){
@@ -1354,6 +1386,8 @@ var rectFromBoundaryPoint = function (boundaryPoint) {
   var textNode = container.firstChild;
   var textLength = textNode ? textNode.nodeValue.length : 0;
   var isLeftSide = textLength > offset;
+
+  var rect;
   if (!textLength) {
     rect = container.getBoundingClientRect();
   } else {
@@ -1942,6 +1976,7 @@ var _prefix = 'ID_';
    * @param {object} payload
    */
   Dispatcher.prototype.dispatch=function(payload) {
+      console.log('dispatch', payload);
     invariant(
       !this.$Dispatcher_isDispatching,
       'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.'

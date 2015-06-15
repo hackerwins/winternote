@@ -24,12 +24,16 @@ module.exports = React.createClass({
     // TODO refactor editingArea rect
     var editingArea = document.getElementsByClassName('note-editing-area')[0];
     var rect = editingArea && editingArea.getBoundingClientRect();
+    var classes = React.addons.classSet({
+      'note-cursor': true,
+      'note-cursor-composition': this.state.isComposition
+    });
 
     var style;
     if (this.state.cursor) {
       style = {
         display: 'block',
-        left: this.state.cursor.left - rect.left,
+        left: this.state.cursor.left - rect.left - 17,
         top: this.state.cursor.top - rect.top
       };
     } else {
@@ -39,7 +43,7 @@ module.exports = React.createClass({
     }
 
     // TODO addClass note-cursor-blink after 500ms for blink cursor
-    return <div className='note-cursor' style={style}></div>;
+    return <div className={classes} style={style}></div>;
   },
 
   _onChange: function () {
@@ -50,7 +54,8 @@ module.exports = React.createClass({
     var data = ViewStore.getData();
 
     return {
-      cursor: data.cursor
+      cursor: data.cursor,
+      isComposition: data.isComposition
     };
   }
 });

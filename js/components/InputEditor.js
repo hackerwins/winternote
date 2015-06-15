@@ -3,7 +3,8 @@
 
 var React = require('react/addons'),
     agent = require('../utils/agent'),
-    NoteAction = require('../actions/NoteAction');
+    NoteAction = require('../actions/NoteAction'),
+    RenderAction = require('../actions/RenderAction');
 
 module.exports = React.createClass({
   displayName: 'InputEditor',
@@ -33,6 +34,7 @@ module.exports = React.createClass({
     this._reset();
     // insert dummy text for next composition update.
     NoteAction.insertText(' ');
+    RenderAction.renderComposition(true);
   },
 
   _handleCompositionUpdate: function (e) {
@@ -41,6 +43,8 @@ module.exports = React.createClass({
   },
 
   _handleCompositionEnd: function (e) {
+    RenderAction.renderComposition(false);
+
     // [workaround] for webkit
     //  - Firefox trigger compositionupdate with a same character of compositionend
     //  - when composition ended. Opposite of Firefox, webkit skip compositionupdate,

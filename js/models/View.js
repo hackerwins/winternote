@@ -9,6 +9,10 @@ _.extend(View.prototype, {
     this._data.cursor = point;
   },
 
+  setComposition: function (isComposition) {
+    this._data.isComposition = isComposition;
+  },
+
   getData: function () {
     return this._data;
   }

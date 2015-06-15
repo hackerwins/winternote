@@ -68,6 +68,13 @@ _.extend(Editor.prototype, {
     var run = _.last(position.stack);
 
     run.text = run.text.substr(0, offset - 1) + text + run.text.substr(offset);
+
+    // XXX
+    if (text.length === 0) {
+      this._selection.moveLeft();
+    } else if (text.length > 1) {
+      this._selection.moveRight(text.length - 1);
+    }
   },
 
   /**

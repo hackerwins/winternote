@@ -67,29 +67,31 @@ module.exports = React.createClass({
    * @param Number width
    * @return {Textrun[][]}
    */
-  _splitIntoLines: function (runs, width) {
-    var lines = [];
-    var points = this._getBreakPoints(runs, width);
+  _splitIntoLines: function (runs/*, width*/) {
+    return [runs];
 
-    if (!points.length) {
-      return [runs];
-    }
+    // var lines = [];
+    // var points = this._getBreakPoints(runs, width);
 
-    runs = _.clone(runs);
-    _.each(points, function (point) {
-      var run = runs[point.run];
-      var isSplit = run.text.length > point.ch;
-      var line = runs.splice(0, point.run + 1);
-      lines.push(line);
+    // if (!points.length) {
+    //   return [runs];
+    // }
 
-      if (isSplit) {
-        runs.unshift(_.clone(run));
-        // _.head(runs).text = _.head(runs).text.substr(point.ch);
-        // _.last(line).text = _.last(line).text.substr(0, point.ch);
-      }
-    });
+    // runs = _.clone(runs);
+    // _.each(points, function (point) {
+    //   var run = runs[point.run];
+    //   var isSplit = run.text.length > point.ch;
+    //   var line = runs.splice(0, point.run + 1);
+    //   lines.push(line);
 
-    return lines;
+    //   if (isSplit) {
+    //     runs.unshift(_.clone(run));
+    //     // _.head(runs).text = _.head(runs).text.substr(point.ch);
+    //     // _.last(line).text = _.last(line).text.substr(0, point.ch);
+    //   }
+    // });
+
+    // return lines;
   },
 
   /**

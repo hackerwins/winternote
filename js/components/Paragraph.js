@@ -22,90 +22,10 @@ module.exports = React.createClass({
 
   render: function () {
     var self = this;
-    var splitRunLists = this._splitIntoLines(this.props.paragraph.runs, this.props.width);
     return <div className="note-paragraph">
-             {_.map(splitRunLists, function (runs, idx) {
-               return self._createLineView(runs, idx);
+             {_.map(this.props.paragraph.runs, function (run, idx) {
+               return <Textrun key={idx} run={run} />;
              })}
-           </div>;
-  },
-
-  _getCharWidth: function (/*ch, run*/) {
-    // implements with view render
-    return 8;
-  },
-
-  /**
-   * @param {Textrun[]} runs
-   * @param {Number} width
-   */
-  _getBreakPoints: function (runs, width) {
-    var breakPoints = [];
-
-    // [for performance]
-    var stackWidth = 0, run, charWidth;
-    for (var i = 0; i < runs.length; i++) {
-      run = runs[i];
-      for (var idx = 0; idx < run.text.length; idx++) {
-        charWidth = this._getCharWidth(run.text.charAt(idx), run);
-        stackWidth += charWidth;
-        if (stackWidth > width) {
-          breakPoints.push({
-            run: i,
-            ch: idx - 1
-          });
-          stackWidth = charWidth;
-        }
-      }
-    }
-
-    return breakPoints;
-  },
-
-  /**
-   * @param {Textrun[]} runs
-   * @param Number width
-   * @return {Textrun[][]}
-   */
-  _splitIntoLines: function (runs/*, width*/) {
-    return [runs];
-
-    // var lines = [];
-    // var points = this._getBreakPoints(runs, width);
-
-    // if (!points.length) {
-    //   return [runs];
-    // }
-
-    // runs = _.clone(runs);
-    // _.each(points, function (point) {
-    //   var run = runs[point.run];
-    //   var isSplit = run.text.length > point.ch;
-    //   var line = runs.splice(0, point.run + 1);
-    //   lines.push(line);
-
-    //   if (isSplit) {
-    //     runs.unshift(_.clone(run));
-    //     // _.head(runs).text = _.head(runs).text.substr(point.ch);
-    //     // _.last(line).text = _.last(line).text.substr(0, point.ch);
-    //   }
-    // });
-
-    // return lines;
-  },
-
-  /**
-   * @param {Textrun[]} runs
-   * @return {ReactElement}
-   */
-  _createLineView: function (runs, idx) {
-    return <div key={idx} className="note-lineview">
-             <div className="note-selection-overlay note-overlay-under-text"></div>
-             <div ref="content" className="note-lineview-content">
-               {_.map(runs, function (run, idx) {
-                 return <Textrun key={idx} run={run} />;
-               })}
-             </div>
            </div>;
   },
 
@@ -113,7 +33,7 @@ module.exports = React.createClass({
     var self = this;
     var selection = NoteStore.getEditor().getSelection();
     var position = selection.getStartPosition();
-    var contentNode = React.findDOMNode(this.refs.content);
+    var contentNode = this.getDOMNode();
 
     // [workaround] to avoid dispatch in the middle of a dispatch
     _.defer(function () {

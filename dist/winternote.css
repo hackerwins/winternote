@@ -8,6 +8,7 @@
 .note-editing-area {
   position: relative;
   height: 300px;
+  cursor: text;
   border: 1px solid black;
 }
 /* note-ime
@@ -15,11 +16,6 @@
 .note-ime {
   position: absolute;
   bottom: 0;
-}
-/* note-editing-area
- --------------------------------------*/
-.note-editing-area {
-  cursor: text;
 }
 /* note-document
  --------------------------------------*/
@@ -36,15 +32,8 @@
 .note-paragraph {
   position: relative;
   margin-bottom: 10px;
-}
-.note-lineview {
-  position: relative;
-  height: 22px;
-}
-.note-lineview-content {
-  position: absolute;
-  z-index: 100;
-  width: 100%;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 /* note-selection-overlay
  --------------------------------------*/
@@ -52,12 +41,7 @@
   position: absolute;
   background-color: #76a7fa;
   opacity: 0.5;
-  left: 0;
-  width: 100%;
-  height: 22px;
 }
-/* note-paragraph-content
- --------------------------------------*/
 /* note-cursor
  --------------------------------------*/
 .note-cursor {

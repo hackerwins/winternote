@@ -32,8 +32,12 @@ ViewStore.dispatchToken = NoteDispatcher.register(function (action) {
   var view = ViewStore.getView();
 
   switch (action.actionType) {
-    case NoteConstants.ACTION.RENDER_CURSOR:
-      view.setCursorPoint(action.point);
+    case NoteConstants.ACTION.RENDER_START_POSITION:
+      view.setStartPoint(action.point);
+      ViewStore.emitChange(NoteConstants.EVENT.RENDER);
+      break;
+    case NoteConstants.ACTION.RENDER_END_POSITION:
+      view.setEndPoint(action.point);
       ViewStore.emitChange(NoteConstants.EVENT.RENDER);
       break;
     case NoteConstants.ACTION.RENDER_COMPOSITION:

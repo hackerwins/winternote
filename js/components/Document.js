@@ -10,14 +10,10 @@ module.exports = React.createClass({
   displayName: 'Document',
   mixins: [context.mixin],
   render: function () {
-    // XXX compute document width
-    var width = 572;
-    
     return <div className='note-document'>
       {_.map(this.props.document.getBody(), function (node, idx) {
-        // TODO build lineviews per paragraph
         if (node.type === 'p') {
-          return <Paragraph key={idx} paragraph={node} width={width} />;
+          return <Paragraph key={idx} paragraph={node} />;
         }
         // TODO implmements table, ...
       })}

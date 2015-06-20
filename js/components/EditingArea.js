@@ -7,6 +7,7 @@ var React = require('react/addons'),
     NoteAction = require('../actions/NoteAction'),
     NoteStore = require('../stores/NoteStore'),
     Document = require('./Document'),
+    Selection = require('./Selection'),
     Cursor = require('./Cursor'),
     InputEditor = require('./InputEditor');
 
@@ -14,6 +15,7 @@ module.exports = React.createClass({
   displayName: 'EditingArea',
   render: function () {
     return <div className='note-editing-area' onMouseDown={this._handleMouseDown}>
+      <Selection />
       <Cursor />
       <Document document={this.props.document} />
       <InputEditor ref='inputEditor' />

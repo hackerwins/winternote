@@ -62,7 +62,7 @@
 
 /* note-selection-overlay
  --------------------------------------*/
-.note-selection-overlay {
+.note-selection>div {
   position: absolute;
   background-color: #76a7fa;
   opacity: 0.5;
@@ -93,12 +93,16 @@
   }
 }
 
+/* note-toolbar, note-statusbar for test
+ --------------------------------------*/
 .note-toolbar {
   .test-border;
 }
 
 .note-statusbar {
   .test-border;
+  word-wrap: break-word;
+  word-break: break-all;
   .note-test-body-info {
     font-size: 12px;
   }

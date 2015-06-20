@@ -10,7 +10,8 @@ module.exports = {
     UPDATE_TEXT: null,
     INSERT_PARAGRAPH: null,
     BACKSPACE: null,
-    RENDER_CURSOR: null,
+    RENDER_START_POSITION: null,
+    RENDER_END_POSITION: null,
     RENDER_COMPOSITION: null
   }),
   EVENT: keyMirror({

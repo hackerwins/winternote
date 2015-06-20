@@ -6,7 +6,7 @@ var React = require('react/addons'),
     NoteConstants = require('../constants/NoteConstants');
 
 module.exports = React.createClass({
-  displayName: 'Cursor',
+  displayName: 'Selection',
 
   getInitialState: function() {
     return this._getState();
@@ -24,26 +24,35 @@ module.exports = React.createClass({
     // TODO refactor editingArea rect
     var editingArea = document.getElementsByClassName('note-editing-area')[0];
     var editingAreaRect = editingArea && editingArea.getBoundingClientRect();
-    var classes = React.addons.classSet({
-      'note-cursor': true,
-      'note-cursor-composition': this.state.isComposition
-    });
 
-    var style;
-    if (this.state.startPoint) {
-      style = {
+    var blockStyles;
+    if (this.state.startPoint && this.state.endPoint) {
+      blockStyles = [{
         display: 'block',
-        left: parseInt(this.state.startPoint.left - editingAreaRect.left - 20, 10),
-        top: parseInt(this.state.startPoint.top - editingAreaRect.top, 10)
-      };
+        left: parseInt(this.state.startPoint.left - editingAreaRect.left, 10),
+        top: parseInt(this.state.startPoint.top - editingAreaRect.top, 10),
+        width: 3,
+        height: 17,
+      }, {
+        display: 'block',
+        width: 0,
+        height: 100
+      }, {
+        display: 'block',
+        left: parseInt(this.state.endPoint.left - editingAreaRect.left, 10),
+        top: parseInt(this.state.endPoint.top - editingAreaRect.top, 10),
+        width: 3,
+        height: 17
+      }];
     } else {
-      style = {
-        display: 'none'
-      };
+      blockStyles = [{display: 'none'}, {display: 'none'}, {display: 'none'}];
     }
 
-    // TODO addClass note-cursor-blink after 500ms for blink cursor
-    return <div className={classes} style={style}></div>;
+    return <div className="note-selection">
+             <div style={blockStyles[0]}></div>
+             <div style={blockStyles[1]}></div>
+             <div style={blockStyles[2]}></div>
+           </div>;
   },
 
   _onChange: function () {

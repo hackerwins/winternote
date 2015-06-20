@@ -37,7 +37,7 @@
 }
 /* note-selection-overlay
  --------------------------------------*/
-.note-selection-overlay {
+.note-selection > div {
   position: absolute;
   background-color: #76a7fa;
   opacity: 0.5;
@@ -117,11 +117,15 @@
 .note-cursor.note-cursor-composition {
   border-bottom: 2px solid black;
 }
+/* note-toolbar, note-statusbar for test
+ --------------------------------------*/
 .note-toolbar {
   border: 1px solid black;
 }
 .note-statusbar {
   border: 1px solid black;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 .note-statusbar .note-test-body-info {
   font-size: 12px;

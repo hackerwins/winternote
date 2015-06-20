@@ -13,11 +13,11 @@ module.exports = React.createClass({
   displayName: 'Paragraph',
   mixins: [context.mixin],
   componentDidMount: function () {
-    this._handleCursor();
+    this._renderSelection();
   },
 
   componentDidUpdate: function () {
-    this._handleCursor();
+    this._renderSelection();
   },
 
   render: function () {
@@ -29,27 +29,29 @@ module.exports = React.createClass({
            </div>;
   },
 
-  _handleCursor: function () {
-    var self = this;
+  _renderSelection: function () {
     var selection = NoteStore.getEditor().getSelection();
-    var position = selection.getStartPosition();
-    var contentNode = this.getDOMNode();
+    this._checkRender(selection.getStartPosition(), RenderAction.renderStartPosition);
+
+    if (!selection.isCollapsed()) {
+      this._checkRender(selection.getEndPosition(), RenderAction.renderEndPosition);
+    }
+  },
+
+  _checkRender: function (position, action) {
+    var idx = _.indexOf(this.props.paragraph.runs, _.last(position.stack));
+    if (idx === -1) {
+      return;
+    }
+
+    var point = dom.rectFromBoundaryPoint({
+      container: this.getDOMNode().childNodes[idx],
+      offset: position.offset
+    });
 
     // [workaround] to avoid dispatch in the middle of a dispatch
     _.defer(function () {
-      var point = null;
-
-      var idx = _.indexOf(self.props.paragraph.runs, _.last(position.stack));
-      if (idx !== -1) {
-        if (selection.isCollapsed()) {
-          point = dom.rectFromBoundaryPoint({
-            container: contentNode.childNodes[idx],
-            offset: position.offset
-          });
-        }
-
-        RenderAction.renderCursor(point);
-      }
+      action(point);
     });
   }
 });

@@ -5,8 +5,12 @@ var View = function () {
 };
 
 _.extend(View.prototype, {
-  setCursorPoint: function (point) {
-    this._data.cursor = point;
+  setStartPoint: function (point) {
+    this._data.startPoint = point;
+  },
+
+  setEndPoint: function (point) {
+    this._data.endPoint = point;
   },
 
   setComposition: function (isComposition) {

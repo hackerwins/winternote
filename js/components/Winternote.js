@@ -10,15 +10,19 @@ var React = require('react/addons'),
 
 module.exports = React.createClass({
   displayName: 'Winternote',
+
   getInitialState: function() {
     return this._getState();
   },
+
   componentDidMount: function() {
     NoteStore.addChangeListener(this._onChange, NoteConstants.EVENT.DOCUMENT);
   },
+
   componentWillUnmount: function() {
     NoteStore.removeChangeListener(this._onChange, NoteConstants.EVENT.DOCUMENT);
   },
+
   render: function () {
     return <div className="note">
       <Toolbar/>
@@ -26,6 +30,7 @@ module.exports = React.createClass({
       <Statusbar document={this.state.document} selection={this.state.selection} />
     </div>;
   },
+
   _getState: function () {
     var editor = NoteStore.getEditor();
 
@@ -34,6 +39,7 @@ module.exports = React.createClass({
       selection: editor.getSelection()
     };
   },
+
   _onChange: function () {
     this.setState(this._getState());
   }

@@ -2,6 +2,10 @@
 'use strict';
 
 var React = require('react/addons'),
+    _ = require('lodash'),
+    dom = require('../utils/dom'),
+    meter = require('../utils/meter'),
+    NoteStore = require('../stores/NoteStore'),
     ViewStore = require('../stores/ViewStore'),
     NoteConstants = require('../constants/NoteConstants');
 
@@ -14,42 +18,80 @@ module.exports = React.createClass({
 
   componentDidMount: function() {
     ViewStore.addChangeListener(this._onChange, NoteConstants.EVENT.RENDER);
+    this._update();
   },
 
   componentWillUnmount: function() {
     ViewStore.removeChangeListener(this._onChange, NoteConstants.EVENT.RENDER);
   },
 
+  componentDidUpdate: function () {
+    this._update();
+  },
+
   render: function () {
-    var blockStyles;
-    if (this.state.startRect && this.state.endRect) {
-      var editingAreaRect = this.props.getEditingAreaRect();
-      blockStyles = [{
-        display: 'block',
-        left: parseInt(this.state.startRect.left - editingAreaRect.left, 10),
-        top: parseInt(this.state.startRect.top - editingAreaRect.top, 10),
-        width: editingAreaRect.width - parseInt(this.state.startRect.left - editingAreaRect.left, 10),
-        height: this.state.startRect.height,
-      }, {
-        display: 'block',
-        width: 0,
-        height: 100
-      }, {
-        display: 'block',
-        left: 0,
-        top: parseInt(this.state.endRect.top - editingAreaRect.top, 10),
-        width: parseInt(this.state.endRect.left - editingAreaRect.left, 10),
-        height: this.state.endRect.height
-      }];
-    } else {
-      blockStyles = [{display: 'none'}, {display: 'none'}, {display: 'none'}];
+    return <div className="note-selection">
+             <div/>
+             <div/>
+             <div/>
+           </div>;
+  },
+
+  _update: function () {
+    // TODO refactor below
+    // TODO render inverted selection properly.
+    // TODO fix flicking selection
+    var selection = NoteStore.getEditor().getSelection();
+    var blocks = React.findDOMNode(this).childNodes;
+
+    if (selection.isCollapsed() || !this.state.startRect || !this.state.endRect) {
+      _.each(blocks, function (block) {
+        block.style.display = 'none';
+      });
+      return;
     }
 
-    return <div className="note-selection">
-             <div style={blockStyles[0]}></div>
-             <div style={blockStyles[1]}></div>
-             <div style={blockStyles[2]}></div>
-           </div>;
+    var editingAreaRect = this.props.getEditingAreaRect();
+    var startRect = meter.rectOn(this.state.startRect, editingAreaRect);
+    var endRect = meter.rectOn(this.state.endRect, editingAreaRect);
+
+    if (meter.isSameLineRects(startRect, endRect)) {
+      blocks[0].style.cssText = dom.toCssText({
+        display: 'block',
+        left: startRect.left,
+        top: startRect.top,
+        width: endRect.left - startRect.left,
+        height: startRect.height
+      });
+
+      _.each(_.tail(blocks), function (block) {
+        block.style.display = 'none';
+      });
+    } else {
+      blocks[0].style.cssText = dom.toCssText({
+        display: 'block',
+        left: startRect.left,
+        top: startRect.top,
+        width: editingAreaRect.width - startRect.left,
+        height: startRect.height
+      });
+
+      blocks[1].style.cssText = dom.toCssText({
+        display: 'block',
+        left: 0,
+        top: startRect.bottom,
+        width: editingAreaRect.width,
+        height: endRect.top - startRect.bottom
+      });
+
+      blocks[2].style.cssText = dom.toCssText({
+        display: 'block',
+        left: 0,
+        top: endRect.top,
+        width: endRect.left,
+        height: endRect.height
+      });
+    }
   },
 
   _onChange: function () {

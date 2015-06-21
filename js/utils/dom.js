@@ -1,6 +1,12 @@
 /*jshint node:true, browser: true*/
 
 /**
+ * utility functions for dom
+ */
+
+var _ = require('lodash');
+
+/**
  * @param {Event} event
  * @return {Point}
  */
@@ -73,13 +79,26 @@ var rectFromBoundaryPoint = function (boundaryPoint) {
   return {
     left: isLeftSide ? rect.left : rect.right,
     top: rect.top,
+    right: rect.right,
+    bottom: rect.bottom,
     width: rect.right - rect.left,
     height: rect.bottom - rect.top
   };
 };
 
+/**
+ * @param {Object} styles
+ * @return {String}
+ */
+var toCssText = function (styles) {
+  return _.map(styles, function (value, key) {
+    return key + ':' + (_.isNumber(value) ? value + 'px' : value);
+  }).join(';');
+};
+
 module.exports = {
   pointFromEvent: pointFromEvent,
   boundaryPointFromEvent: boundaryPointFromEvent,
-  rectFromBoundaryPoint: rectFromBoundaryPoint
+  rectFromBoundaryPoint: rectFromBoundaryPoint,
+  toCssText: toCssText
 };

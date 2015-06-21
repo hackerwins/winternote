@@ -15,11 +15,23 @@ module.exports = React.createClass({
   displayName: 'EditingArea',
   render: function () {
     return <div className='note-editing-area' onMouseDown={this._handleMouseDown}>
-      <Selection />
-      <Cursor />
+      <Selection getEditingAreaRect={this.getEditingAreaRect} />
+      <Cursor getEditingAreaRect={this.getEditingAreaRect} />
       <Document document={this.props.document} />
       <InputEditor ref='inputEditor' />
     </div>;
+  },
+
+  getEditingAreaRect: function () {
+    if (!this.isMounted()) {
+      return {
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0
+      };
+    }
+    return React.findDOMNode(this).getBoundingClientRect();
   },
 
   /**

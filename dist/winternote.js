@@ -64,16 +64,16 @@ var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     NoteConstants = require('../constants/NoteConstants');
 
 module.exports = {
-  renderStartPosition: function (point) {
+  renderStartPosition: function (rect) {
     NoteDispatcher.dispatch({
       actionType: NoteConstants.ACTION.RENDER_START_POSITION,
-      point: point
+      rect: rect
     });
   },
-  renderEndPosition: function (point) {
+  renderEndPosition: function (rect) {
     NoteDispatcher.dispatch({
       actionType: NoteConstants.ACTION.RENDER_END_POSITION,
-      point: point
+      rect: rect
     });
   },
   renderComposition: function (isComposition) {
@@ -109,20 +109,19 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    // TODO refactor editingArea rect
-    var editingArea = document.getElementsByClassName('note-editing-area')[0];
-    var editingAreaRect = editingArea && editingArea.getBoundingClientRect();
     var classes = React.addons.classSet({
       'note-cursor': true,
       'note-cursor-composition': this.state.isComposition
     });
 
     var style;
-    if (this.state.startPoint) {
+    if (this.state.startRect) {
+      var editingAreaRect = this.props.getEditingAreaRect();
       style = {
         display: 'block',
-        left: parseInt(this.state.startPoint.left - editingAreaRect.left - 20, 10),
-        top: parseInt(this.state.startPoint.top - editingAreaRect.top, 10)
+        left: parseInt(this.state.startRect.left - editingAreaRect.left - 20),
+        top: parseInt(this.state.startRect.top - editingAreaRect.top),
+        height: this.state.startRect.height
       };
     } else {
       style = {
@@ -142,8 +141,8 @@ module.exports = React.createClass({
     var data = ViewStore.getData();
 
     return {
-      startPoint: data.startPoint,
-      endPoint: data.endPoint,
+      startRect: data.startRect,
+      endRect: data.endRect,
       isComposition: data.isComposition
     };
   }
@@ -193,11 +192,23 @@ module.exports = React.createClass({
   displayName: 'EditingArea',
   render: function () {
     return React.createElement("div", {className: "note-editing-area", onMouseDown: this._handleMouseDown}, 
-      React.createElement(Selection, null), 
-      React.createElement(Cursor, null), 
+      React.createElement(Selection, {getEditingAreaRect: this.getEditingAreaRect}), 
+      React.createElement(Cursor, {getEditingAreaRect: this.getEditingAreaRect}), 
       React.createElement(Document, {document: this.props.document}), 
       React.createElement(InputEditor, {ref: "inputEditor"})
     );
+  },
+
+  getEditingAreaRect: function () {
+    if (!this.isMounted()) {
+      return {
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0
+      };
+    }
+    return React.findDOMNode(this).getBoundingClientRect();
   },
 
   /**
@@ -375,7 +386,6 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var self = this;
     return React.createElement("div", {className: "note-paragraph"}, 
              _.map(this.props.paragraph.runs, function (run, idx) {
                return React.createElement(Textrun, {key: idx, run: run});
@@ -398,14 +408,14 @@ module.exports = React.createClass({
       return;
     }
 
-    var point = dom.rectFromBoundaryPoint({
+    var rect = dom.rectFromBoundaryPoint({
       container: this.getDOMNode().childNodes[idx],
       offset: position.offset
     });
 
     // [workaround] to avoid dispatch in the middle of a dispatch
     _.defer(function () {
-      action(point);
+      action(rect);
     });
   }
 });
@@ -435,28 +445,25 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    // TODO refactor editingArea rect
-    var editingArea = document.getElementsByClassName('note-editing-area')[0];
-    var editingAreaRect = editingArea && editingArea.getBoundingClientRect();
-
     var blockStyles;
-    if (this.state.startPoint && this.state.endPoint) {
+    if (this.state.startRect && this.state.endRect) {
+      var editingAreaRect = this.props.getEditingAreaRect();
       blockStyles = [{
         display: 'block',
-        left: parseInt(this.state.startPoint.left - editingAreaRect.left, 10),
-        top: parseInt(this.state.startPoint.top - editingAreaRect.top, 10),
-        width: 3,
-        height: 17,
+        left: parseInt(this.state.startRect.left - editingAreaRect.left, 10),
+        top: parseInt(this.state.startRect.top - editingAreaRect.top, 10),
+        width: editingAreaRect.width - parseInt(this.state.startRect.left - editingAreaRect.left, 10),
+        height: this.state.startRect.height,
       }, {
         display: 'block',
         width: 0,
         height: 100
       }, {
         display: 'block',
-        left: parseInt(this.state.endPoint.left - editingAreaRect.left, 10),
-        top: parseInt(this.state.endPoint.top - editingAreaRect.top, 10),
-        width: 3,
-        height: 17
+        left: 0,
+        top: parseInt(this.state.endRect.top - editingAreaRect.top, 10),
+        width: parseInt(this.state.endRect.left - editingAreaRect.left, 10),
+        height: this.state.endRect.height
       }];
     } else {
       blockStyles = [{display: 'none'}, {display: 'none'}, {display: 'none'}];
@@ -477,8 +484,8 @@ module.exports = React.createClass({
     var data = ViewStore.getData();
 
     return {
-      startPoint: data.startPoint,
-      endPoint: data.endPoint,
+      startRect: data.startRect,
+      endRect: data.endRect,
       isComposition: data.isComposition
     };
   }
@@ -1157,12 +1164,12 @@ var View = function () {
 };
 
 _.extend(View.prototype, {
-  setStartPoint: function (point) {
-    this._data.startPoint = point;
+  setStartRect: function (rect) {
+    this._data.startRect = rect;
   },
 
-  setEndPoint: function (point) {
-    this._data.endPoint = point;
+  setEndRect: function (rect) {
+    this._data.endRect = rect;
   },
 
   setComposition: function (isComposition) {
@@ -1283,11 +1290,11 @@ ViewStore.dispatchToken = NoteDispatcher.register(function (action) {
 
   switch (action.actionType) {
     case NoteConstants.ACTION.RENDER_START_POSITION:
-      view.setStartPoint(action.point);
+      view.setStartRect(action.rect);
       ViewStore.emitChange(NoteConstants.EVENT.RENDER);
       break;
     case NoteConstants.ACTION.RENDER_END_POSITION:
-      view.setEndPoint(action.point);
+      view.setEndRect(action.rect);
       ViewStore.emitChange(NoteConstants.EVENT.RENDER);
       break;
     case NoteConstants.ACTION.RENDER_COMPOSITION:
@@ -1398,6 +1405,7 @@ var caretPositionFromPoint = function (point) {
       offset: range.startOffset
     };
   }
+  // for Old IE
 };
 
 /**
@@ -1438,7 +1446,9 @@ var rectFromBoundaryPoint = function (boundaryPoint) {
 
   return {
     left: isLeftSide ? rect.left : rect.right,
-    top: rect.top
+    top: rect.top,
+    width: rect.right - rect.left,
+    height: rect.bottom - rect.top
   };
 };
 

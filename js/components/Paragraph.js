@@ -21,7 +21,6 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var self = this;
     return <div className="note-paragraph">
              {_.map(this.props.paragraph.runs, function (run, idx) {
                return <Textrun key={idx} run={run} />;
@@ -44,14 +43,14 @@ module.exports = React.createClass({
       return;
     }
 
-    var point = dom.rectFromBoundaryPoint({
+    var rect = dom.rectFromBoundaryPoint({
       container: this.getDOMNode().childNodes[idx],
       offset: position.offset
     });
 
     // [workaround] to avoid dispatch in the middle of a dispatch
     _.defer(function () {
-      action(point);
+      action(rect);
     });
   }
 });

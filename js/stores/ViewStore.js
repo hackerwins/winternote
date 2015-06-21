@@ -33,11 +33,11 @@ ViewStore.dispatchToken = NoteDispatcher.register(function (action) {
 
   switch (action.actionType) {
     case NoteConstants.ACTION.RENDER_START_POSITION:
-      view.setStartPoint(action.point);
+      view.setStartRect(action.rect);
       ViewStore.emitChange(NoteConstants.EVENT.RENDER);
       break;
     case NoteConstants.ACTION.RENDER_END_POSITION:
-      view.setEndPoint(action.point);
+      view.setEndRect(action.rect);
       ViewStore.emitChange(NoteConstants.EVENT.RENDER);
       break;
     case NoteConstants.ACTION.RENDER_COMPOSITION:

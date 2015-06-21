@@ -21,20 +21,19 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    // TODO refactor editingArea rect
-    var editingArea = document.getElementsByClassName('note-editing-area')[0];
-    var editingAreaRect = editingArea && editingArea.getBoundingClientRect();
     var classes = React.addons.classSet({
       'note-cursor': true,
       'note-cursor-composition': this.state.isComposition
     });
 
     var style;
-    if (this.state.startPoint) {
+    if (this.state.startRect) {
+      var editingAreaRect = this.props.getEditingAreaRect();
       style = {
         display: 'block',
-        left: parseInt(this.state.startPoint.left - editingAreaRect.left - 20, 10),
-        top: parseInt(this.state.startPoint.top - editingAreaRect.top, 10)
+        left: parseInt(this.state.startRect.left - editingAreaRect.left - 20),
+        top: parseInt(this.state.startRect.top - editingAreaRect.top),
+        height: this.state.startRect.height
       };
     } else {
       style = {
@@ -54,8 +53,8 @@ module.exports = React.createClass({
     var data = ViewStore.getData();
 
     return {
-      startPoint: data.startPoint,
-      endPoint: data.endPoint,
+      startRect: data.startRect,
+      endRect: data.endRect,
       isComposition: data.isComposition
     };
   }

@@ -31,6 +31,7 @@ var caretPositionFromPoint = function (point) {
       offset: range.startOffset
     };
   }
+  // for Old IE
 };
 
 /**
@@ -71,7 +72,9 @@ var rectFromBoundaryPoint = function (boundaryPoint) {
 
   return {
     left: isLeftSide ? rect.left : rect.right,
-    top: rect.top
+    top: rect.top,
+    width: rect.right - rect.left,
+    height: rect.bottom - rect.top
   };
 };
 

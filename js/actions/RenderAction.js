@@ -2,16 +2,16 @@ var NoteDispatcher = require('../dispatcher/NoteDispatcher'),
     NoteConstants = require('../constants/NoteConstants');
 
 module.exports = {
-  renderStartPosition: function (point) {
+  renderStartPosition: function (rect) {
     NoteDispatcher.dispatch({
       actionType: NoteConstants.ACTION.RENDER_START_POSITION,
-      point: point
+      rect: rect
     });
   },
-  renderEndPosition: function (point) {
+  renderEndPosition: function (rect) {
     NoteDispatcher.dispatch({
       actionType: NoteConstants.ACTION.RENDER_END_POSITION,
-      point: point
+      rect: rect
     });
   },
   renderComposition: function (isComposition) {

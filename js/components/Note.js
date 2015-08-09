@@ -4,11 +4,10 @@
 var React = require('react/addons'),
     NoteConstants = require('../constants/NoteConstants'),
     NoteStore = require('../stores/NoteStore'),
-    Statusbar = require('./Statusbar'),
     EditingArea = require('./EditingArea');
 
 module.exports = React.createClass({
-  displayName: 'Winternote',
+  displayName: 'Note',
 
   getInitialState: function() {
     return this._getState();
@@ -25,7 +24,6 @@ module.exports = React.createClass({
   render: function () {
     return <div className="note">
       <EditingArea document={this.state.document}/>
-      <Statusbar document={this.state.document} selection={this.state.selection} />
     </div>;
   },
 

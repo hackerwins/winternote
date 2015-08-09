@@ -7,7 +7,7 @@
  --------------------------------------*/
 .note-editing-area {
   position: relative;
-  height: 300px;
+  background-color: #fff;
   cursor: text;
   border: 1px solid black;
 }
@@ -15,6 +15,8 @@
  --------------------------------------*/
 .note-ime {
   position: absolute;
+  width: 0;
+  height: 0;
   bottom: 0;
 }
 /* note-document
@@ -48,68 +50,6 @@
   position: absolute;
   border-right: 2px solid black;
   width: 17px;
-}
-.note-cursor.note-cursor-blink {
-  -webkit-animation: fadeinout 1s infinite;
-  -moz-animation: fadeinout 1s infinite;
-  -ms-animation: fadeinout 1s infinite;
-  -o-animation: fadeinout 1s infinite;
-  animation: fadeinout 1s infinite;
-}
-@-webkit-keyframes fadeinout {
-  45% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@-moz-keyframes fadeinout {
-  45% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@-ms-keyframes fadeinout {
-  45% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@-o-keyframes fadeinout {
-  45% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes fadeinout {
-  45% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
 }
 .note-cursor.note-cursor-composition {
   border-bottom: 2px solid black;

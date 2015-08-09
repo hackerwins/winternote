@@ -1,21 +1,5 @@
 /* Mixins
  --------------------------------------*/
-.keyframes (@name, @frames) {
-  @-webkit-keyframes @name { @frames(); }
-  @-moz-keyframes @name { @frames(); }
-  @-ms-keyframes @name { @frames(); }
-  @-o-keyframes @name { @frames(); }
-  @keyframes @name { @frames(); }
-}
-
-.animation (@arguments) {
-  -webkit-animation: @arguments;
-  -moz-animation: @arguments;
-  -ms-animation: @arguments;
-  -o-animation: @arguments;
-  animation: @arguments;
-}
-
 .test-border {
   border: 1px solid black;
 }
@@ -24,7 +8,7 @@
  --------------------------------------*/
 .note-editing-area {
   position: relative;
-  height: 300px;
+  background-color: #fff;
   cursor: text;
 
   // for test
@@ -35,6 +19,8 @@
  --------------------------------------*/
 .note-ime {
   position: absolute;
+  width: 0;
+  height: 0;
   bottom: 0;
 }
 
@@ -74,16 +60,6 @@
   position: absolute;
   border-right: 2px solid black;
   width: 17px;
-
-  &.note-cursor-blink {
-    .keyframes(fadeinout;{
-      45% { opacity: 1; }
-      50% { opacity: 0; }
-      100% { opacity: 0; }
-    });
-
-    .animation(fadeinout 1s infinite);
-  }
 
   &.note-cursor-composition {
     border-bottom: 2px solid black;

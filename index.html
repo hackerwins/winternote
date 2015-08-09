@@ -6,11 +6,39 @@
   <link rel="stylesheet" href="dist/winternote.css">
 </head>
 <body>
-  <div id="winternote"></div>
+  <div>Winternote</div>
+  <div id="note"></div>
   <script src="dist/winternote.js"></script>
   <script>
-    var wrapper = document.getElementById('winternote');
-    var note = winternote.create(wrapper);
+    var note = winternote.create(document.getElementById('note'));
+
+    var moveLeft = function () {
+      note.moveLeft();
+    };
+
+    var moveRight = function () {
+      note.moveRight();
+    };
+
+    var insertText = function () {
+      note.insertText('hello');
+    };
+
+    var backspace = function () {
+      note.backspace();
+    };
   </script>
+  <hr>
+  <div>
+    <span>Navigation: </span>
+    <button onClick="moveLeft()">moveLeft</button>
+    <button onClick="moveRight()">moveRight</button>
+    <button onClick="Backspace()">backspace</button>
+  </div>
+  <div>
+    <span>Typing</span>
+    <button onClick="insertText()">insertText(hello)</button>
+    <button onClick="backspace()">backspace</button>
+  </div>
 </body>
 </html>

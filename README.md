@@ -2,7 +2,7 @@
 Winternote is semantic WYSIWYG editor powered by react. 
 
 ### Winternote
-Many web editors use contentEditable or designMode for editing. That functionality is the easiest way to make edit on the way.
+Many web editors use contentEditable or designMode for editing which the easiest way to make editor on the way.
 But, lack of standards makes result of markup by editors on each browser were so different. That problem doesn't solve with filters,
 because browsers are always updated and period of their release are uncountable.
 
